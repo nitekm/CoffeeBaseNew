@@ -1,7 +1,7 @@
 package ncodedev.coffeebase
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class CoffeeBaseApplication : Application() {
-
-}
+@HiltAndroidApp
+class CoffeeBaseApplication : Application()
