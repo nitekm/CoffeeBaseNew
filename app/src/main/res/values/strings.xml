@@ -189,6 +189,7 @@
     <string name="invalid_token">Token not valid or has expired</string>
     <string name="delete_failed">Delete operation failed</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="user_picture">User picture</string>
 
     <!--    dropdowns-->
     <string-array name="continents">

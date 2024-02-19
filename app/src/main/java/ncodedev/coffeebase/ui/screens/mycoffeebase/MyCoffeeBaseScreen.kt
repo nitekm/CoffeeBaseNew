@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,19 +24,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.ui.components.CoffeeBaseTopAppBar
+import ncodedev.coffeebase.ui.components.DrawerNavigation
 import ncodedev.coffeebase.ui.components.MyCoffeeBaseNavigationDrawer
+import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
 fun MyCoffeeBaseScreen() {
     val viewModel: MyCoffeeBaseViewModel = viewModel()
     var coffees: List<Coffee> by remember { mutableStateOf(emptyList()) }
+
+    val navController = rememberNavController()
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route ?: Screens.MyCoffeeBase
 
     coffees = when (val uiState = viewModel.myCoffeeBaseUiState) {
         is MyCoffeeBaseUiState.Success -> uiState.coffees
@@ -50,14 +57,14 @@ fun MyCoffeeBaseScreen() {
     ) {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
-        var selectedItemIndex = rememberSaveable {
-            mutableStateOf(0)
-        }
+
         MyCoffeeBaseNavigationDrawer(
-            selectedItemIndex = selectedItemIndex,
+            currentRoute = currentRoute.toString(),
+            navController = navController,
             scope = scope,
             drawerState = drawerState
         ) {
+            DrawerNavigation(navController = navController)
             Scaffold(
                 topBar = {
                     CoffeeBaseTopAppBar(
@@ -71,10 +78,22 @@ fun MyCoffeeBaseScreen() {
                         canNavigateBack = false,
                         navigateUp = { },
                         actions = {
-                            IconButton(onClick = {}) {
+                            IconButton(onClick = { }) {
                                 Icon(
                                     imageVector = Icons.Filled.Search,
                                     contentDescription = stringResource(R.string.search)
+                                )
+                            }
+                            IconButton(onClick = { }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.sort_filled_24),
+                                    contentDescription = stringResource(R.string.sort)
+                                )
+                            }
+                            IconButton(onClick = { }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.filter_filled_24),
+                                    contentDescription = stringResource(R.string.do_filter)
                                 )
                             }
                         }
@@ -82,7 +101,7 @@ fun MyCoffeeBaseScreen() {
                 },
                 content = { innerPadding ->
                     CoffeesGrid(coffees = coffees, modifier = Modifier, innerPadding)
-                }
+                },
             )
         }
     }
@@ -197,58 +216,5 @@ fun MyCoffeeBaseScreenPreview() {
                 )
             }
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MyCoffeeBaseScreenNavigationDrawerOpenPreview() {
-    CoffeeBaseTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
-            val scope = rememberCoroutineScope()
-            var selectedItemIndex = rememberSaveable {
-                mutableStateOf(0)
-            }
-            MyCoffeeBaseNavigationDrawer(
-                selectedItemIndex = selectedItemIndex,
-                scope = scope,
-                drawerState = drawerState
-            ) {
-                Scaffold(
-                    topBar = {
-                        CoffeeBaseTopAppBar(
-                            titleResId = R.string.my_coffeebase,
-                            canShowNavigationDrawerIcon = true,
-                            canNavigateBack = false,
-                            navigateUp = {},
-                            actions = {
-                                IconButton(onClick = {}) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Search,
-                                        contentDescription = stringResource(R.string.search)
-                                    )
-                                }
-                            }
-                        )
-                    },
-                    content = { padding ->
-                        CoffeesGrid(
-                            coffees = listOf(
-                                Coffee(
-                                    1,
-                                    "coffee1",
-                                    true,
-                                    ""
-                                )
-                            ), modifier = Modifier, padding
-                        )
-                    }
-                )
-            }
-        }
     }
 }
