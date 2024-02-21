@@ -190,6 +190,8 @@
     <string name="delete_failed">Delete operation failed</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="user_picture">User picture</string>
+    <string name="please_log_in_on_the_device">Please login to Your Google account on your device</string>
+    <string name="please_log_in_before_proceeding">Please log in before proceeding to the app</string>
 
     <!--    dropdowns-->
     <string-array name="continents">

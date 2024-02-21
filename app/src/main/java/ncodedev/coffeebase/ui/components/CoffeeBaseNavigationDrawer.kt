@@ -9,6 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,17 +21,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.ui.screens.login.LoginScreen
-import ncodedev.coffeebase.ui.screens.mycoffeebase.MyCoffeeBaseScreen
+import ncodedev.coffeebase.ui.screens.login.LoginViewModel
 
 data class NavigationItem(
     val title: String,
@@ -119,7 +118,8 @@ fun getNavigationDrawerItems(): List<NavigationItem> {
 }
 
 @Composable
-private fun NavDrawerHeader() {
+private fun NavDrawerHeader(viewModel: LoginViewModel = hiltViewModel()) {
+    val user by viewModel.user.collectAsState()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -132,7 +132,7 @@ private fun NavDrawerHeader() {
             model = ImageRequest.Builder(
                 context = LocalContext.current
             )
-                .data(null)
+                .data(user?.pictureUri)
                 .crossfade(true)
                 .build(),
             contentDescription = stringResource(R.string.user_picture),
@@ -141,46 +141,12 @@ private fun NavDrawerHeader() {
             contentScale = ContentScale.Crop
         )
         Text(
-            text = "User name",
+            text = user?.username ?: "",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
     }
-}
-
-@Composable
-fun DrawerNavigation(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        startDestination = Screens.Login.name
-    ) {
-        composable(Screens.MyCoffeeBase.name) {
-            MyCoffeeBaseScreen()
-        }
-        composable(Screens.Login.name) {
-            LoginScreen()
-        }
-        composable(Screens.EditCoffee.name) {
-            //EditCoffeeScreen()
-        }
-        composable(Screens.AddBrewRecipe.name) {
-            //AddBrewRecipeScreen()
-        }
-        composable(Screens.Account.name) {
-            //AccountScreen()
-        }
-        composable(Screens.About.name) {
-            //AboutScreen()
-        }
-        composable(Screens.Settings.name) {
-            //SettingsScreen()
-        }
-        composable(Screens.SignOut.name) {
-            //SignOut()
-        }
-    }
-
 }
 

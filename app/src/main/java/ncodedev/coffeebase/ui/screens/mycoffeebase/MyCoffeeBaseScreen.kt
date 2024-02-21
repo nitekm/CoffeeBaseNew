@@ -1,5 +1,6 @@
 package ncodedev.coffeebase.ui.screens.mycoffeebase
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,26 +24,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.ui.components.CoffeeBaseTopAppBar
-import ncodedev.coffeebase.ui.components.DrawerNavigation
 import ncodedev.coffeebase.ui.components.MyCoffeeBaseNavigationDrawer
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
-fun MyCoffeeBaseScreen() {
-    val viewModel: MyCoffeeBaseViewModel = viewModel()
+fun MyCoffeeBaseScreen(navController: NavHostController) {
+
+    Log.d("COFFEEBASESCREEN", "coffeeBaseScreen Launched!")
+    val viewModel: MyCoffeeBaseViewModel = hiltViewModel()
     var coffees: List<Coffee> by remember { mutableStateOf(emptyList()) }
 
-    val navController = rememberNavController()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route ?: Screens.MyCoffeeBase
 
@@ -64,7 +65,6 @@ fun MyCoffeeBaseScreen() {
             scope = scope,
             drawerState = drawerState
         ) {
-            DrawerNavigation(navController = navController)
             Scaffold(
                 topBar = {
                     CoffeeBaseTopAppBar(
