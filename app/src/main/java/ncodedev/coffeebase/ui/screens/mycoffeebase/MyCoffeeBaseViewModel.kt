@@ -1,6 +1,7 @@
 package ncodedev.coffeebase.ui.screens.mycoffeebase
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -35,11 +36,12 @@ class MyCoffeeBaseViewModel @Inject constructor(
     var myCoffeeBaseUiState: MyCoffeeBaseUiState by mutableStateOf(MyCoffeeBaseUiState.Loading)
         private set
 
-    init {
+    fun fetchInitData() {
         getCoffeesPaged(request)
     }
 
-    private fun getCoffeesPaged(request: PageCoffeeRequest) {
+    @VisibleForTesting
+    fun getCoffeesPaged(request: PageCoffeeRequest) {
         viewModelScope.launch {
             myCoffeeBaseUiState = MyCoffeeBaseUiState.Loading
             myCoffeeBaseUiState = try {
