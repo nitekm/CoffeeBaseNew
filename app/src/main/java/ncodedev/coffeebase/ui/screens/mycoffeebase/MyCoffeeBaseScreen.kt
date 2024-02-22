@@ -33,8 +33,8 @@ import kotlinx.coroutines.launch
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.ui.components.CoffeeBaseTopAppBar
-import ncodedev.coffeebase.ui.components.MyCoffeeBaseNavigationDrawer
 import ncodedev.coffeebase.ui.components.Screens
+import ncodedev.coffeebase.ui.components.navdrawer.MyCoffeeBaseNavigationDrawer
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
@@ -48,7 +48,7 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
     val currentRoute = currentBackStackEntry?.destination?.route ?: Screens.MyCoffeeBase
 
     coffees = when (val uiState = viewModel.myCoffeeBaseUiState) {
-        is MyCoffeeBaseUiState.Success -> uiState.coffees
+        is MyCoffeeBaseUiState.Success -> uiState.coffeesPage.content
         else -> emptyList()
     }
 

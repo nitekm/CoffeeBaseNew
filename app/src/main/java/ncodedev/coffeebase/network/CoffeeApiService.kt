@@ -1,10 +1,13 @@
 package ncodedev.coffeebase.network
 
 import ncodedev.coffeebase.model.Coffee
-import retrofit2.http.GET
+import ncodedev.coffeebase.model.Page
+import ncodedev.coffeebase.model.PageCoffeeRequest
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface CoffeeApiService {
 
-    @GET("coffees/find")
-    suspend fun getCoffeesPaged() : List<Coffee>
+    @POST("coffees/find")
+    suspend fun getCoffeesPaged(@Body request: PageCoffeeRequest) : Page<Coffee>
 }

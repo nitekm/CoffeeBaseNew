@@ -11,12 +11,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.data.repository.CoffeeRepository
 import ncodedev.coffeebase.model.Coffee
+import ncodedev.coffeebase.model.Page
+import ncodedev.coffeebase.model.PageCoffeeRequest
 import okio.IOException
 import javax.inject.Inject
 
 
 sealed interface MyCoffeeBaseUiState{
-    data class Success(val coffees: List<Coffee>) : MyCoffeeBaseUiState
+    data class Success(val coffeesPage: Page<Coffee>) : MyCoffeeBaseUiState
     object Error: MyCoffeeBaseUiState
     object Loading: MyCoffeeBaseUiState
 }
@@ -26,20 +28,22 @@ class MyCoffeeBaseViewModel @Inject constructor(
     private val coffeeRepository: CoffeeRepository
 ) : ViewModel() {
 
+    private var request = PageCoffeeRequest()
+
     private val TAG: String = "MyCoffeeBaseModelView"
 
     var myCoffeeBaseUiState: MyCoffeeBaseUiState by mutableStateOf(MyCoffeeBaseUiState.Loading)
         private set
 
     init {
-        getCoffeesPaged()
+        getCoffeesPaged(request)
     }
 
-    private fun getCoffeesPaged() {
+    private fun getCoffeesPaged(request: PageCoffeeRequest) {
         viewModelScope.launch {
             myCoffeeBaseUiState = MyCoffeeBaseUiState.Loading
             myCoffeeBaseUiState = try {
-                MyCoffeeBaseUiState.Success(coffeeRepository.getCoffeesPaged())
+                MyCoffeeBaseUiState.Success(coffeeRepository.getCoffeesPaged(request))
             } catch (e: IOException) {
                 Log.e(TAG, "GetCoffeesPaged resulted in exception $e")
                 MyCoffeeBaseUiState.Error

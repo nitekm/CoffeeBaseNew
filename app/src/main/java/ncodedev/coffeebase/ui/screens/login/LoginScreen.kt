@@ -14,12 +14,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.R
+import ncodedev.coffeebase.model.User
 import ncodedev.coffeebase.ui.components.Screens
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
     val viewModel: LoginViewModel = hiltViewModel()
-    val user by viewModel.user.collectAsState()
+    var user: User? by remember { mutableStateOf(null) }
+
+    user =  when (val uiState = viewModel.loginScreenUiState) {
+        is LoginScreenUiState.Success -> uiState.user
+        else -> {
+            Log.e("Login Screen", "User nullified")
+            null
+        }
+    }
+
 
     val request by viewModel.request
     val context = LocalContext.current
@@ -47,6 +57,7 @@ fun LoginScreen(navController: NavHostController) {
         }
         LaunchedEffect(user) {
             user?.let {
+                Log.d("inside user launched effect", "current user: ${user?.username}")
                 navController.navigate(Screens.MyCoffeeBase.name) {
                     popUpTo(Screens.Login.name) {
                         inclusive = true
