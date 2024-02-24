@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -44,6 +43,7 @@ fun MyCoffeeBaseNavigationDrawer(
     currentRoute: String,
     scope: CoroutineScope,
     drawerState: DrawerState,
+    viewModel: NavDrawerViewModel,
     content: @Composable () -> Unit
 ) {
     val items = getNavigationDrawerItems()
@@ -51,7 +51,7 @@ fun MyCoffeeBaseNavigationDrawer(
         modifier = Modifier.background(color = MaterialTheme.colorScheme.onSurfaceVariant),
         drawerContent = {
             ModalDrawerSheet {
-                NavDrawerHeader()
+                NavDrawerHeader(viewModel)
                 Divider(
                     thickness = 3.dp,
                     modifier = Modifier.padding(bottom = 20.dp)
@@ -120,7 +120,7 @@ fun getNavigationDrawerItems(): List<NavigationItem> {
 }
 
 @Composable
-private fun NavDrawerHeader(viewModel: NavDrawerViewModel = hiltViewModel()) {
+private fun NavDrawerHeader(viewModel: NavDrawerViewModel) {
     val user by remember {
         mutableStateOf(viewModel.user)
     }

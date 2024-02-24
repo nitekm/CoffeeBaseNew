@@ -35,19 +35,22 @@ import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.ui.components.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.navdrawer.MyCoffeeBaseNavigationDrawer
+import ncodedev.coffeebase.ui.components.navdrawer.NavDrawerViewModel
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
 fun MyCoffeeBaseScreen(navController: NavHostController) {
 
     Log.d("COFFEEBASESCREEN", "coffeeBaseScreen Launched!")
-    val viewModel: MyCoffeeBaseViewModel = hiltViewModel()
+    val coffeeBaseViewModel: MyCoffeeBaseViewModel = hiltViewModel()
     var coffees: List<Coffee> by remember { mutableStateOf(emptyList()) }
+
+    val navDrawerViewModel: NavDrawerViewModel = hiltViewModel()
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route ?: Screens.MyCoffeeBase
 
-    coffees = when (val uiState = viewModel.myCoffeeBaseUiState) {
+    coffees = when (val uiState = coffeeBaseViewModel.myCoffeeBaseUiState) {
         is MyCoffeeBaseUiState.Success -> uiState.coffeesPage.content
         else -> emptyList()
     }
@@ -57,7 +60,7 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
         color = MaterialTheme.colorScheme.background
     ) {
         LaunchedEffect(true) {
-            viewModel.fetchInitData()
+            coffeeBaseViewModel.fetchInitData()
         }
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
@@ -66,7 +69,8 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
             currentRoute = currentRoute.toString(),
             navController = navController,
             scope = scope,
-            drawerState = drawerState
+            drawerState = drawerState,
+            viewModel = navDrawerViewModel
         ) {
             Scaffold(
                 topBar = {
