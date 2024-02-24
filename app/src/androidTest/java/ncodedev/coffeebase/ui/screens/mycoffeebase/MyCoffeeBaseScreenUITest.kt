@@ -37,34 +37,4 @@ class MyCoffeeBaseScreenUITest {
 
         composeTestRule.onAllNodesWithText("coffee name", substring = true, ignoreCase = true).assertCountEquals(5)
     }
-
-//    @Test
-//    fun when_menu_icon_is_clicked_nav_drawer_opens() {
-//
-//        composeTestRule.setContent {
-//            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-//            val scope = rememberCoroutineScope()
-//
-//            CoffeeBaseTopAppBar(
-//                titleResId = R.string.my_coffeebase,
-//                canShowNavigationDrawerIcon = true,
-//                showNavigationDrawer = { scope.launch { drawerState.open() } },
-//                canNavigateBack = false,
-//                navigateUp = { },
-//                actions = {}
-//            )
-//            MyCoffeeBaseNavigationDrawer(
-//                currentRoute = "Test",
-//                navController = NavHostController(LocalContext.current),
-//                scope = scope,
-//                drawerState = drawerState
-//            ) {
-//
-//            }
-//        }
-//        composeTestRule.onNodeWithContentDescription("Menu Button").performClick()
-//        composeTestRule.waitForIdle()
-//        composeTestRule.onNodeWithContentDescription("User picture").assertIsDisplayed()
-//
-//    }
 }

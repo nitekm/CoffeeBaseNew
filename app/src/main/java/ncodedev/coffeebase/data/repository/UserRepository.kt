@@ -6,12 +6,12 @@ import javax.inject.Singleton
 
 
 interface IUserRepository {
-    val user: User?
+    var user: User?
     val token: String
 }
 
 @Singleton
 class UserRepository @Inject constructor() : IUserRepository {
-    override val user: User? = null
+    override var user: User? = null
     override val token: String get() = user?.token ?: ""
 }
