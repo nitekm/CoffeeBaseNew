@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -64,10 +65,6 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        LaunchedEffect(gridState) {
-            if (!gridState.canScrollForward)
-                coffeeBaseViewModel.fetchMore()
-        }
         LaunchedEffect(true) {
             coffeeBaseViewModel.fetchInitData()
         }
@@ -136,7 +133,13 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                     )
                 },
                 content = { innerPadding ->
-                    CoffeesGrid(gridState, coffees = coffees, modifier = Modifier, innerPadding)
+                    CoffeesGrid(
+                        gridState,
+                        { coffeeBaseViewModel.fetchMore() },
+                        coffees = coffees,
+                        modifier = Modifier,
+                        innerPadding
+                    )
                 },
             )
         }
@@ -146,6 +149,7 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
 @Composable
 fun CoffeesGrid(
     state: LazyGridState,
+    fetchMoreData: () -> Unit = {},
     coffees: List<Coffee>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues
@@ -156,6 +160,9 @@ fun CoffeesGrid(
         modifier = modifier.padding(horizontal = 10.dp),
         contentPadding = contentPadding
     ) {
+        if (!state.canScrollForward) {
+            fetchMoreData()
+        }
         items(
             items = coffees,
             key = { coffee -> coffee.id }
@@ -233,10 +240,21 @@ fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: (SortOptions) 
                 modifier = Modifier.rotate(sortOptions.iconRotateValue)
             )},
         text = { Text(text = stringResource(sortOptions.nameResId)) },
-        onClick = { /*() -> coffeeBaseViewModel.applySortOption(sortOptions) */ }
+        onClick = onSortOptionsSelected
     )
 }
 
+@Composable
+fun FilterMenu() {
+    val showDialog = remember { mutableStateOf(true) }
+    if (showDialog.value) {
+        Dialog(onDismissRequest = { showDialog.value = false }) {
+            Column {
+                val
+            }
+        }
+    }
+}
 //@Preview(showBackground = true)
 //@Composable
 //fun MyCoffeeBaseScreenPreview() {
