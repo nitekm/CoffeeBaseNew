@@ -3,17 +3,19 @@ package ncodedev.coffeebase.ui.screens.mycoffeebase
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -21,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,11 +33,11 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.Coffee
+import ncodedev.coffeebase.model.SortOptions
 import ncodedev.coffeebase.ui.components.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.navdrawer.MyCoffeeBaseNavigationDrawer
 import ncodedev.coffeebase.ui.components.navdrawer.NavDrawerViewModel
-import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
 fun MyCoffeeBaseScreen(navController: NavHostController) {
@@ -50,8 +51,12 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route ?: Screens.MyCoffeeBase
 
+    var sortMenuExpanded by remember { mutableStateOf(false) }
+
+    val gridState = rememberLazyGridState()
+
     coffees = when (val uiState = coffeeBaseViewModel.myCoffeeBaseUiState) {
-        is MyCoffeeBaseUiState.Success -> uiState.coffeesPage.content
+        is MyCoffeeBaseUiState.Success -> uiState.coffees
         else -> emptyList()
     }
 
@@ -59,6 +64,10 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        LaunchedEffect(gridState) {
+            if (!gridState.canScrollForward)
+                coffeeBaseViewModel.fetchMore()
+        }
         LaunchedEffect(true) {
             coffeeBaseViewModel.fetchInitData()
         }
@@ -91,11 +100,31 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                                     contentDescription = stringResource(R.string.search)
                                 )
                             }
-                            IconButton(onClick = { }) {
+                            IconButton(
+                                onClick = { sortMenuExpanded = true }
+                            ) {
                                 Icon(
                                     painter = painterResource(R.drawable.sort_filled_24),
                                     contentDescription = stringResource(R.string.sort)
                                 )
+                            }
+                            DropdownMenu(expanded = sortMenuExpanded, onDismissRequest = { sortMenuExpanded = false }) {
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(R.string.sort), color = Color.Gray, fontSize = 17.sp)},
+                                    onClick = { }
+                                )
+                                Divider()
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(R.string.sort_default)) },
+                                    leadingIcon = { Icon(imageVector = Icons.Filled.Clear, contentDescription = stringResource(R.string.sort_default)) },
+                                    onClick = { }
+                                )
+                                SortOptions.entries.forEach { sortOption ->
+                                    SortMenuItem(
+                                        sortOptions = sortOption,
+                                        onSortOptionsSelected = { sortOrder -> coffeeBaseViewModel.fetchSorted(sortOrder)}
+                                    )
+                                }
                             }
                             IconButton(onClick = { }) {
                                 Icon(
@@ -107,7 +136,7 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                     )
                 },
                 content = { innerPadding ->
-                    CoffeesGrid(coffees = coffees, modifier = Modifier, innerPadding)
+                    CoffeesGrid(gridState, coffees = coffees, modifier = Modifier, innerPadding)
                 },
             )
         }
@@ -116,16 +145,21 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
 
 @Composable
 fun CoffeesGrid(
+    state: LazyGridState,
     coffees: List<Coffee>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues
 ) {
     LazyVerticalGrid(
+        state = state,
         columns = GridCells.Adaptive(150.dp),
         modifier = modifier.padding(horizontal = 10.dp),
         contentPadding = contentPadding
     ) {
-        items(items = coffees, key = { coffee -> coffee.id }) { coffee ->
+        items(
+            items = coffees,
+            key = { coffee -> coffee.id }
+        ) { coffee ->
             CoffeeCard(
                 coffee,
                 modifier = modifier
@@ -189,39 +223,53 @@ fun CoffeeCard(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun MyCoffeeBaseScreenPreview() {
-    CoffeeBaseTheme {
-        Scaffold(
-            topBar = {
-                CoffeeBaseTopAppBar(
-                    titleResId = R.string.my_coffeebase,
-                    canShowNavigationDrawerIcon = true,
-                    canNavigateBack = false,
-                    navigateUp = {},
-                    actions = {
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = stringResource(R.string.search)
-                            )
-                        }
-                    }
-                )
-            },
-            content = { padding ->
-                CoffeesGrid(
-                    coffees = listOf(
-                        Coffee(
-                            1,
-                            "coffee1",
-                            true,
-                            ""
-                        )
-                    ), modifier = Modifier, padding
-                )
-            }
-        )
-    }
+fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: (SortOptions) -> Unit) {
+    DropdownMenuItem(
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = stringResource(sortOptions.contentDescitpionResId),
+                modifier = Modifier.rotate(sortOptions.iconRotateValue)
+            )},
+        text = { Text(text = stringResource(sortOptions.nameResId)) },
+        onClick = { /*() -> coffeeBaseViewModel.applySortOption(sortOptions) */ }
+    )
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun MyCoffeeBaseScreenPreview() {
+//    CoffeeBaseTheme {
+//        Scaffold(
+//            topBar = {
+//                CoffeeBaseTopAppBar(
+//                    titleResId = R.string.my_coffeebase,
+//                    canShowNavigationDrawerIcon = true,
+//                    canNavigateBack = false,
+//                    navigateUp = {},
+//                    actions = {
+//                        IconButton(onClick = {}) {
+//                            Icon(
+//                                imageVector = Icons.Filled.Search,
+//                                contentDescription = stringResource(R.string.search)
+//                            )
+//                        }
+//                    }
+//                )
+//            },
+//            content = { padding ->
+//                CoffeesGrid(
+//                    coffees = listOf(
+//                        Coffee(
+//                            1,
+//                            "coffee1",
+//                            true,
+//                            ""
+//                        )
+//                    ), modifier = Modifier, padding
+//                )
+//            }
+//        )
+//    }
+//}

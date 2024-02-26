@@ -12,16 +12,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.data.repository.CoffeeRepository
 import ncodedev.coffeebase.model.Coffee
-import ncodedev.coffeebase.model.Page
 import ncodedev.coffeebase.model.PageCoffeeRequest
+import ncodedev.coffeebase.model.SortOptions
 import okio.IOException
 import javax.inject.Inject
 
 
-sealed interface MyCoffeeBaseUiState{
-    data class Success(val coffeesPage: Page<Coffee>) : MyCoffeeBaseUiState
-    object Error: MyCoffeeBaseUiState
-    object Loading: MyCoffeeBaseUiState
+sealed interface MyCoffeeBaseUiState {
+    data class Success(val coffees: List<Coffee>) : MyCoffeeBaseUiState
+    object Error : MyCoffeeBaseUiState
+    object Loading : MyCoffeeBaseUiState
 }
 
 @HiltViewModel
@@ -29,7 +29,9 @@ class MyCoffeeBaseViewModel @Inject constructor(
     private val coffeeRepository: CoffeeRepository
 ) : ViewModel() {
 
-    private var request = PageCoffeeRequest()
+    private var coffees by mutableStateOf<List<Coffee>>(emptyList())
+    private var lastRequest by mutableStateOf(PageCoffeeRequest())
+    private var isLastPage by mutableStateOf(false)
 
     private val TAG: String = "MyCoffeeBaseModelView"
 
@@ -37,15 +39,24 @@ class MyCoffeeBaseViewModel @Inject constructor(
         private set
 
     fun fetchInitData() {
+        val request = PageCoffeeRequest()
+        lastRequest = request
         getCoffeesPaged(request)
     }
 
     @VisibleForTesting
-    fun getCoffeesPaged(request: PageCoffeeRequest) {
+    fun getCoffeesPaged(request: PageCoffeeRequest, fetchingMore: Boolean = false) {
         viewModelScope.launch {
             myCoffeeBaseUiState = MyCoffeeBaseUiState.Loading
             myCoffeeBaseUiState = try {
-                MyCoffeeBaseUiState.Success(coffeeRepository.getCoffeesPaged(request))
+                val response = coffeeRepository.getCoffeesPaged(request)
+                val allCoffees = if (fetchingMore) {
+                    coffees + response.content
+                } else {
+                    response.content
+                }
+                isLastPage = response.isLastPage
+                MyCoffeeBaseUiState.Success(allCoffees)
             } catch (e: IOException) {
                 Log.e(TAG, "GetCoffeesPaged resulted in exception $e")
                 MyCoffeeBaseUiState.Error
@@ -54,5 +65,23 @@ class MyCoffeeBaseViewModel @Inject constructor(
                 MyCoffeeBaseUiState.Error
             }
         }
+    }
+
+    fun fetchSorted(sortOptions: SortOptions) {
+        val request = PageCoffeeRequest(
+            sortProperty = sortOptions.sortProperty,
+            sortDirection = sortOptions.sortDirection
+        )
+        lastRequest = request
+        getCoffeesPaged(request)
+    }
+
+    fun fetchMore() {
+        if (isLastPage) {
+            return
+        }
+        val request: PageCoffeeRequest = lastRequest.copy(pageNumber = lastRequest.pageNumber + 1)
+        lastRequest = request
+        getCoffeesPaged(request)
     }
 }
