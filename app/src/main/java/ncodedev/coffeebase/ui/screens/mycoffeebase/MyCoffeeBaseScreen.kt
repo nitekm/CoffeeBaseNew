@@ -1,7 +1,7 @@
 package ncodedev.coffeebase.ui.screens.mycoffeebase
 
-import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -34,16 +33,17 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.Coffee
+import ncodedev.coffeebase.model.FilterOptions
 import ncodedev.coffeebase.model.SortOptions
 import ncodedev.coffeebase.ui.components.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.navdrawer.MyCoffeeBaseNavigationDrawer
 import ncodedev.coffeebase.ui.components.navdrawer.NavDrawerViewModel
+import java.util.*
 
 @Composable
 fun MyCoffeeBaseScreen(navController: NavHostController) {
 
-    Log.d("COFFEEBASESCREEN", "coffeeBaseScreen Launched!")
     val coffeeBaseViewModel: MyCoffeeBaseViewModel = hiltViewModel()
     var coffees: List<Coffee> by remember { mutableStateOf(emptyList()) }
 
@@ -53,8 +53,8 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
     val currentRoute = currentBackStackEntry?.destination?.route ?: Screens.MyCoffeeBase
 
     var sortMenuExpanded by remember { mutableStateOf(false) }
-
-    val gridState = rememberLazyGridState()
+    var showDialog = remember { mutableStateOf(false) }
+    val appliedFilters =  mutableStateMapOf<FilterOptions, Boolean>()
 
     coffees = when (val uiState = coffeeBaseViewModel.myCoffeeBaseUiState) {
         is MyCoffeeBaseUiState.Success -> uiState.coffees
@@ -107,35 +107,45 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                             }
                             DropdownMenu(expanded = sortMenuExpanded, onDismissRequest = { sortMenuExpanded = false }) {
                                 DropdownMenuItem(
-                                    text = { Text(text = stringResource(R.string.sort), color = Color.Gray, fontSize = 17.sp)},
+                                    text = {
+                                        Text(
+                                            text = stringResource(R.string.sort),
+                                            color = Color.Gray,
+                                            fontSize = 17.sp
+                                        )
+                                    },
                                     onClick = { }
                                 )
                                 Divider()
                                 DropdownMenuItem(
                                     text = { Text(text = stringResource(R.string.sort_default)) },
-                                    leadingIcon = { Icon(imageVector = Icons.Filled.Clear, contentDescription = stringResource(R.string.sort_default)) },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Filled.Clear,
+                                            contentDescription = stringResource(R.string.sort_default)
+                                        )
+                                    },
                                     onClick = { }
                                 )
                                 SortOptions.entries.forEach { sortOption ->
                                     SortMenuItem(
                                         sortOptions = sortOption,
-                                        onSortOptionsSelected = { sortOrder -> coffeeBaseViewModel.fetchSorted(sortOrder)}
+                                        onSortOptionsSelected = { coffeeBaseViewModel.fetchSorted(sortOption) }
                                     )
                                 }
                             }
-                            IconButton(onClick = { }) {
+                            IconButton(onClick = { showDialog.value = true }) {
                                 Icon(
                                     painter = painterResource(R.drawable.filter_filled_24),
                                     contentDescription = stringResource(R.string.do_filter)
                                 )
                             }
+                            FilterMenu(showDialog, appliedFilters, applyFilter = { coffeeBaseViewModel.fetchFiltered(appliedFilters.value) })
                         }
                     )
                 },
                 content = { innerPadding ->
                     CoffeesGrid(
-                        gridState,
-                        { coffeeBaseViewModel.fetchMore() },
                         coffees = coffees,
                         modifier = Modifier,
                         innerPadding
@@ -148,21 +158,15 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
 
 @Composable
 fun CoffeesGrid(
-    state: LazyGridState,
-    fetchMoreData: () -> Unit = {},
     coffees: List<Coffee>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues
 ) {
     LazyVerticalGrid(
-        state = state,
         columns = GridCells.Adaptive(150.dp),
         modifier = modifier.padding(horizontal = 10.dp),
         contentPadding = contentPadding
     ) {
-        if (!state.canScrollForward) {
-            fetchMoreData()
-        }
         items(
             items = coffees,
             key = { coffee -> coffee.id }
@@ -231,30 +235,76 @@ fun CoffeeCard(
 }
 
 @Composable
-fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: (SortOptions) -> Unit) {
+fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: () -> Unit) {
     DropdownMenuItem(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 contentDescription = stringResource(sortOptions.contentDescitpionResId),
                 modifier = Modifier.rotate(sortOptions.iconRotateValue)
-            )},
+            )
+        },
         text = { Text(text = stringResource(sortOptions.nameResId)) },
         onClick = onSortOptionsSelected
     )
 }
 
 @Composable
-fun FilterMenu() {
-    val showDialog = remember { mutableStateOf(true) }
-    if (showDialog.value) {
-        Dialog(onDismissRequest = { showDialog.value = false }) {
-            Column {
-                val
-            }
+fun FilterMenu(showFilterMenu: MutableState<Boolean>, currentFilters: MutableMap<FilterOptions, Boolean>, applyFilter: (Map<String, List<FilterOptions>>) -> Unit) {
+
+    val filtersByGroup = FilterOptions.entries.groupBy { it.filterKey }
+
+    filtersByGroup.keys.forEach { filters ->
+        filtersByGroup[filters]?.forEach {
+            currentFilters[it] = currentFilters[it] ?: false
         }
     }
+    DropdownMenu(
+        expanded = showFilterMenu.value,
+        onDismissRequest = { showFilterMenu.value = false },
+    ) {
+        filtersByGroup.keys.forEach { key ->
+            Text(
+                text = key.replaceFirstChar { it.titlecase(Locale.getDefault()) },
+                modifier = Modifier.padding(7.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+            )
+            val filterGroup = filtersByGroup[key]
+            filterGroup?.forEach { filterOption ->
+                var checkedState by remember { mutableStateOf(false) }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            currentFilters[filterOption] = !(currentFilters[filterOption] ?: false)
+                            checkedState = !checkedState
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = currentFilters[filterOption] ?: false,
+                        onCheckedChange = null
+                    )
+                    Text(
+                        text = stringResource(filterOption.displayNameResId),
+                        modifier = Modifier.padding(start = 7.dp)
+                    )
+                }
+            }
+            Divider()
+        }
+        DropdownMenuItem(
+            text = { Text(text = stringResource(R.string.apply_filters)) },
+            onClick = {
+                applyFilter(filtersByGroup)
+                showFilterMenu.value = false
+            },
+            colors = MenuDefaults.itemColors(textColor = MaterialTheme.colorScheme.tertiaryContainer)
+        )
+    }
 }
+
 //@Preview(showBackground = true)
 //@Composable
 //fun MyCoffeeBaseScreenPreview() {

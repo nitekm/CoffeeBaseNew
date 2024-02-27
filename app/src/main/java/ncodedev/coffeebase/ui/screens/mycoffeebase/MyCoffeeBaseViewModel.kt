@@ -5,6 +5,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.network.HttpException
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.data.repository.CoffeeRepository
 import ncodedev.coffeebase.model.Coffee
+import ncodedev.coffeebase.model.FilterOptions
 import ncodedev.coffeebase.model.PageCoffeeRequest
 import ncodedev.coffeebase.model.SortOptions
 import okio.IOException
@@ -72,6 +74,12 @@ class MyCoffeeBaseViewModel @Inject constructor(
             sortProperty = sortOptions.sortProperty,
             sortDirection = sortOptions.sortDirection
         )
+        lastRequest = request
+        getCoffeesPaged(request)
+    }
+
+    fun fetchFiltered(filters: SnapshotStateMap<FilterOptions, Boolean>) {
+        val request = lastRequest.copy(filters = filters)
         lastRequest = request
         getCoffeesPaged(request)
     }
