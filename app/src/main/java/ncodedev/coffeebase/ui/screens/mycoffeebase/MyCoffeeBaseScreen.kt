@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
@@ -54,7 +55,6 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
 
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var showDialog = remember { mutableStateOf(false) }
-    val appliedFilters =  mutableStateMapOf<FilterOptions, Boolean>()
 
     coffees = when (val uiState = coffeeBaseViewModel.myCoffeeBaseUiState) {
         is MyCoffeeBaseUiState.Success -> uiState.coffees
@@ -140,7 +140,7 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                                     contentDescription = stringResource(R.string.do_filter)
                                 )
                             }
-                            FilterMenu(showDialog, appliedFilters, applyFilter = { coffeeBaseViewModel.fetchFiltered(appliedFilters.value) })
+                            FilterMenu(showDialog, applyFilter = { coffeeBaseViewModel.fetchFiltered() })
                         }
                     )
                 },
@@ -250,9 +250,15 @@ fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: () -> Unit) {
 }
 
 @Composable
-fun FilterMenu(showFilterMenu: MutableState<Boolean>, currentFilters: MutableMap<FilterOptions, Boolean>, applyFilter: (Map<String, List<FilterOptions>>) -> Unit) {
+fun FilterMenu(
+    showFilterMenu: MutableState<Boolean>,
+    applyFilter: () -> Unit,
+    currentFilters: MutableState<Map<String, Set<String>>>
+) {
 
+    val filtersValue by currentFilters.
     val filtersByGroup = FilterOptions.entries.groupBy { it.filterKey }
+
 
     filtersByGroup.keys.forEach { filters ->
         filtersByGroup[filters]?.forEach {
@@ -297,7 +303,7 @@ fun FilterMenu(showFilterMenu: MutableState<Boolean>, currentFilters: MutableMap
         DropdownMenuItem(
             text = { Text(text = stringResource(R.string.apply_filters)) },
             onClick = {
-                applyFilter(filtersByGroup)
+                applyFilter()
                 showFilterMenu.value = false
             },
             colors = MenuDefaults.itemColors(textColor = MaterialTheme.colorScheme.tertiaryContainer)

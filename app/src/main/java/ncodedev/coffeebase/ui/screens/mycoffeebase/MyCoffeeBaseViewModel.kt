@@ -2,10 +2,12 @@ package ncodedev.coffeebase.ui.screens.mycoffeebase
 
 import android.util.Log
 import androidx.annotation.VisibleForTesting
+import androidx.compose.runtime.currentCompositionErrors
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.network.HttpException
@@ -32,6 +34,7 @@ class MyCoffeeBaseViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var coffees by mutableStateOf<List<Coffee>>(emptyList())
+    val currentFilters: MutableLiveData<Map<String, Set<String>>> = MutableLiveData(emptyMap())
     private var lastRequest by mutableStateOf(PageCoffeeRequest())
     private var isLastPage by mutableStateOf(false)
 
@@ -78,8 +81,8 @@ class MyCoffeeBaseViewModel @Inject constructor(
         getCoffeesPaged(request)
     }
 
-    fun fetchFiltered(filters: SnapshotStateMap<FilterOptions, Boolean>) {
-        val request = lastRequest.copy(filters = filters)
+    fun fetchFiltered() {
+        val request = lastRequest.copy(filters = currentFilters.value ?: emptyMap())
         lastRequest = request
         getCoffeesPaged(request)
     }
@@ -91,5 +94,9 @@ class MyCoffeeBaseViewModel @Inject constructor(
         val request: PageCoffeeRequest = lastRequest.copy(pageNumber = lastRequest.pageNumber + 1)
         lastRequest = request
         getCoffeesPaged(request)
+    }
+
+    fun updateFilters(newFilters: Map<String, Set<String>>) {
+        currentFilters.value = newFilters
     }
 }
