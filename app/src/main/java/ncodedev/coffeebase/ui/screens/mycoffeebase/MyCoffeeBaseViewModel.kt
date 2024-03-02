@@ -2,11 +2,9 @@ package ncodedev.coffeebase.ui.screens.mycoffeebase
 
 import android.util.Log
 import androidx.annotation.VisibleForTesting
-import androidx.compose.runtime.currentCompositionErrors
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ncodedev.coffeebase.data.repository.CoffeeRepository
 import ncodedev.coffeebase.model.Coffee
-import ncodedev.coffeebase.model.FilterOptions
 import ncodedev.coffeebase.model.PageCoffeeRequest
 import ncodedev.coffeebase.model.SortOptions
 import okio.IOException
@@ -45,7 +42,19 @@ class MyCoffeeBaseViewModel @Inject constructor(
 
     fun fetchInitData() {
         val request = PageCoffeeRequest()
-        lastRequest = request
+        getCoffeesPaged(request)
+    }
+
+    fun fetchSorted(sortOptions: SortOptions) {
+        val request = lastRequest.copy(
+            sortProperty = sortOptions.sortProperty,
+            sortDirection = sortOptions.sortDirection
+        )
+        getCoffeesPaged(request)
+    }
+
+    fun fetchFiltered(newFilters: Map<String, Set<String>>) {
+        val request = lastRequest.copy(filters = newFilters)
         getCoffeesPaged(request)
     }
 
@@ -61,6 +70,8 @@ class MyCoffeeBaseViewModel @Inject constructor(
                     response.content
                 }
                 isLastPage = response.isLastPage
+                lastRequest = request
+                currentFilters.value = request.filters
                 MyCoffeeBaseUiState.Success(allCoffees)
             } catch (e: IOException) {
                 Log.e(TAG, "GetCoffeesPaged resulted in exception $e")
@@ -72,21 +83,6 @@ class MyCoffeeBaseViewModel @Inject constructor(
         }
     }
 
-    fun fetchSorted(sortOptions: SortOptions) {
-        val request = PageCoffeeRequest(
-            sortProperty = sortOptions.sortProperty,
-            sortDirection = sortOptions.sortDirection
-        )
-        lastRequest = request
-        getCoffeesPaged(request)
-    }
-
-    fun fetchFiltered() {
-        val request = lastRequest.copy(filters = currentFilters.value ?: emptyMap())
-        lastRequest = request
-        getCoffeesPaged(request)
-    }
-
     fun fetchMore() {
         if (isLastPage) {
             return
@@ -94,9 +90,5 @@ class MyCoffeeBaseViewModel @Inject constructor(
         val request: PageCoffeeRequest = lastRequest.copy(pageNumber = lastRequest.pageNumber + 1)
         lastRequest = request
         getCoffeesPaged(request)
-    }
-
-    fun updateFilters(newFilters: Map<String, Set<String>>) {
-        currentFilters.value = newFilters
     }
 }

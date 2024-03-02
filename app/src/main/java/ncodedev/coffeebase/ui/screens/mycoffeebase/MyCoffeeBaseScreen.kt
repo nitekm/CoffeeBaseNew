@@ -3,7 +3,9 @@ package ncodedev.coffeebase.ui.screens.mycoffeebase
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,7 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
@@ -54,7 +55,7 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
     val currentRoute = currentBackStackEntry?.destination?.route ?: Screens.MyCoffeeBase
 
     var sortMenuExpanded by remember { mutableStateOf(false) }
-    var showDialog = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
 
     coffees = when (val uiState = coffeeBaseViewModel.myCoffeeBaseUiState) {
         is MyCoffeeBaseUiState.Success -> uiState.coffees
@@ -140,7 +141,7 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                                     contentDescription = stringResource(R.string.do_filter)
                                 )
                             }
-                            FilterMenu(showDialog, applyFilter = { coffeeBaseViewModel.fetchFiltered() })
+                            FilterMenu(showDialog, coffeeBaseViewModel)
                         }
                     )
                 },
@@ -252,44 +253,36 @@ fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: () -> Unit) {
 @Composable
 fun FilterMenu(
     showFilterMenu: MutableState<Boolean>,
-    applyFilter: () -> Unit,
-    currentFilters: MutableState<Map<String, Set<String>>>
+    viewModel: MyCoffeeBaseViewModel
 ) {
 
-    val filtersValue by currentFilters.
-    val filtersByGroup = FilterOptions.entries.groupBy { it.filterKey }
+    val filterStates = remember { mutableStateMapOf<FilterOptions, Boolean>() }
 
+    FilterOptions.entries.forEach{ filterOption ->
+        filterStates[filterOption] = viewModel.currentFilters.value?.get(filterOption.filterKey)?.contains(filterOption.filterValue) ?: false}
 
-    filtersByGroup.keys.forEach { filters ->
-        filtersByGroup[filters]?.forEach {
-            currentFilters[it] = currentFilters[it] ?: false
-        }
-    }
     DropdownMenu(
         expanded = showFilterMenu.value,
         onDismissRequest = { showFilterMenu.value = false },
     ) {
-        filtersByGroup.keys.forEach { key ->
+        FilterOptions.entries.groupBy { it.filterKey }.forEach { (filterKey, filterOptions) ->
             Text(
-                text = key.replaceFirstChar { it.titlecase(Locale.getDefault()) },
+                text = filterKey.replaceFirstChar { it.titlecase(Locale.getDefault()) },
                 modifier = Modifier.padding(7.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
             )
-            val filterGroup = filtersByGroup[key]
-            filterGroup?.forEach { filterOption ->
-                var checkedState by remember { mutableStateOf(false) }
+            filterOptions.forEach { filterOption ->
                 Row(
                     Modifier
                         .fillMaxWidth()
                         .clickable {
-                            currentFilters[filterOption] = !(currentFilters[filterOption] ?: false)
-                            checkedState = !checkedState
+                            filterStates[filterOption] = filterStates[filterOption]?.not() ?: true
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
-                        checked = currentFilters[filterOption] ?: false,
+                        checked = filterStates[filterOption] ?: false,
                         onCheckedChange = null
                     )
                     Text(
@@ -303,7 +296,10 @@ fun FilterMenu(
         DropdownMenuItem(
             text = { Text(text = stringResource(R.string.apply_filters)) },
             onClick = {
-                applyFilter()
+                val chosenFilters = filterStates.entries.filter {
+                    it.value
+                }.groupBy({ it.key.filterKey }, { it.key.filterValue } ).mapValues { it.value.toSet() }
+                viewModel.fetchFiltered(chosenFilters)
                 showFilterMenu.value = false
             },
             colors = MenuDefaults.itemColors(textColor = MaterialTheme.colorScheme.tertiaryContainer)
