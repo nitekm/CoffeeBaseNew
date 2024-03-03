@@ -1,12 +1,13 @@
 package ncodedev.coffeebase.ui.screens.mycoffeebase.component.topbar
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import io.mockk.mockk
+import io.mockk.verify
 import ncodedev.coffeebase.ui.components.topbar.SortAction
 import ncodedev.coffeebase.ui.screens.mycoffeebase.MyCoffeeBaseViewModel
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -15,25 +16,48 @@ class SortActionTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val mockViewModel: MyCoffeeBaseViewModel = mockk()
+    private val mockViewModel: MyCoffeeBaseViewModel = mockk(relaxed = true)
+
+    @Before
+    fun setup() {
+        val sortMenuState = mutableStateOf(false)
+
+        composeTestRule.setContent {
+            SortAction(showSortMenu = sortMenuState, viewModel = mockViewModel)
+        }
+    }
 
     @Test
-    fun test_sortAction_uiComponents_displayedCorrectly() {
-        // Prepare mock MenuToggle interface object
-        val menuState = mutableStateOf(false)
-
-        // Set content to display SortAction
-        composeTestRule.setContent {
-            SortAction(showSortMenu = menuState, viewModel = mockViewModel)
-        }
-
-        // Verify IconButton is displayed
+    fun test_sortAction_existsAndMenuIsHidden() {
+        //SortActionMenu exists and is hidden: Icon is visible, and sort options are not visible
         composeTestRule.onNodeWithTag("SortActionButton").assertExists()
-
-        // Assert that DropdownMenu is displayed and its default state is collapsed (not expanded)
-        composeTestRule.onNodeWithTag("SortDropdownMenu").assertExists()
-        // Menu is not expanded by default, which is indicated by not being able to find opened Options items
         composeTestRule.onNodeWithText("Sort Default").assertDoesNotExist()
     }
 
+    @Test
+    fun test_sortAction_opensOnClickAndAllElementsAreVisible() {
+        composeTestRule.onNodeWithTag("SortActionButton").performClick()
+        composeTestRule.onNodeWithTag("SortTitleMenuItem").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("SortDefaultMenuItem").assertIsDisplayed()
+        composeTestRule.onAllNodesWithTag("SortOption").assertCountEquals(6)
+    }
+
+    @Test
+    fun test_sortAction_onClickOnDefaultViewModelFetchInitDataIsCalled() {
+        composeTestRule.onNodeWithTag("SortActionButton").performClick()
+        composeTestRule.onNodeWithTag("SortDefaultMenuItem").performClick()
+
+        verify { mockViewModel.fetchInitData() }
+    }
+
+    @Test
+    fun test_sortAction_onClickOnSortOptionViewModelFetchSortedIsCalled() {
+        composeTestRule.onNodeWithTag("SortActionButton").performClick()
+        val nodes = composeTestRule.onAllNodesWithTag("SortOption", useUnmergedTree = true)
+        if (nodes.fetchSemanticsNodes().isNotEmpty()) {
+            nodes.onFirst().performClick()
+        }
+
+        verify { mockViewModel.fetchSorted(any()) }
+    }
 }

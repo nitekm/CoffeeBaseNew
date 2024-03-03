@@ -24,7 +24,7 @@ fun SortAction(showSortMenu: MutableState<Boolean>,
 ) {
     IconButton(
         onClick = { showSortMenu.value = true },
-        Modifier.testTag("SortIconButton")
+        Modifier.testTag("SortActionButton")
     ) {
         Icon(
             painter = painterResource(R.drawable.sort_filled_24),
@@ -44,7 +44,8 @@ fun SortAction(showSortMenu: MutableState<Boolean>,
                     fontSize = 17.sp
                 )
             },
-            onClick = { }
+            onClick = {},
+            modifier = Modifier.testTag("SortTitleMenuItem")
         )
         Divider()
         DropdownMenuItem(
@@ -55,7 +56,8 @@ fun SortAction(showSortMenu: MutableState<Boolean>,
                     contentDescription = stringResource(R.string.sort_default)
                 )
             },
-            onClick = { viewModel.fetchInitData() }
+            onClick = { viewModel.fetchInitData() },
+            modifier = Modifier.testTag("SortDefaultMenuItem")
         )
         SortOptions.entries.forEach { sortOption ->
             SortMenuItem(
@@ -77,6 +79,7 @@ private fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: () -> 
             )
         },
         text = { Text(text = stringResource(sortOptions.nameResId)) },
-        onClick = onSortOptionsSelected
+        onClick = onSortOptionsSelected,
+        modifier = Modifier.testTag("SortOption")
     )
 }
