@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +26,10 @@ import java.util.*
 fun FilterAction(showFilterMenu: MutableState<Boolean>,
                  viewModel: MyCoffeeBaseViewModel
 ) {
-    IconButton(onClick = { showFilterMenu.value = true }) {
+    IconButton(
+        onClick = { showFilterMenu.value = true },
+        modifier = Modifier.testTag("FilterActionButton")
+    ) {
         Icon(
             painter = painterResource(R.drawable.filter_filled_24),
             contentDescription = stringResource(R.string.do_filter)
@@ -60,6 +64,7 @@ private fun FilterMenu(
                 Row(
                     Modifier
                         .fillMaxWidth()
+                        .testTag("FilterOption")
                         .clickable {
                             filterStates[filterOption] = filterStates[filterOption]?.not() ?: true
                         },
@@ -86,7 +91,8 @@ private fun FilterMenu(
                 viewModel.fetchFiltered(chosenFilters)
                 showFilterMenu.value = false
             },
-            colors = MenuDefaults.itemColors(textColor = MaterialTheme.colorScheme.tertiaryContainer)
+            colors = MenuDefaults.itemColors(textColor = MaterialTheme.colorScheme.tertiaryContainer),
+            modifier = Modifier.testTag("ApplyFiltersMenuItem")
         )
     }
 }
