@@ -8,7 +8,6 @@ import ncodedev.coffeebase.model.Coffee
 import org.junit.Rule
 import org.junit.Test
 
-
 class MyCoffeeBaseScreenUITest {
 
     @get:Rule

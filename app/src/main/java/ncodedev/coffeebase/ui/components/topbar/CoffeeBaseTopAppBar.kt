@@ -1,4 +1,4 @@
-package ncodedev.coffeebase.ui.components
+package ncodedev.coffeebase.ui.components.topbar
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.RowScope

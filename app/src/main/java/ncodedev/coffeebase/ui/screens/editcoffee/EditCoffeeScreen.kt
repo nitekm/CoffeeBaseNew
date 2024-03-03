@@ -6,8 +6,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.ui.components.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.components.Screens
+import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
 
 @Composable
 fun EditCoffeeScreen(navController: NavHostController) {
