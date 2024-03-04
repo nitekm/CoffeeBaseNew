@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.FilterOptions
 import ncodedev.coffeebase.ui.screens.mycoffeebase.MyCoffeeBaseViewModel
-import java.util.*
 
 @Composable
 fun FilterAction(showFilterMenu: MutableState<Boolean>,
@@ -52,10 +52,23 @@ private fun FilterMenu(
     DropdownMenu(
         expanded = showFilterMenu.value,
         onDismissRequest = { showFilterMenu.value = false },
+        modifier = Modifier.testTag("FilterMenu")
     ) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(R.string.do_filter),
+                    color = Color.Gray,
+                    fontSize = 17.sp
+                )
+            },
+            onClick = {},
+            modifier = Modifier.testTag("FilterTitleMenuItem")
+        )
+        Divider()
         FilterOptions.entries.groupBy { it.filterKey }.forEach { (filterKey, filterOptions) ->
             Text(
-                text = filterKey.replaceFirstChar { it.titlecase(Locale.getDefault()) },
+                text = stringResource(filterOptions.first().sectionTitleResId),
                 modifier = Modifier.padding(7.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
@@ -71,6 +84,7 @@ private fun FilterMenu(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
+                        modifier = Modifier.testTag(filterOption.filterValue + "CheckBox"),
                         checked = filterStates[filterOption] ?: false,
                         onCheckedChange = null
                     )

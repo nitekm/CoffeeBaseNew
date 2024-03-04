@@ -6,8 +6,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,7 +34,9 @@ import ncodedev.coffeebase.ui.components.navdrawer.MyCoffeeBaseNavigationDrawer
 import ncodedev.coffeebase.ui.components.navdrawer.NavDrawerViewModel
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.components.topbar.FilterAction
+import ncodedev.coffeebase.ui.components.topbar.SearchAction
 import ncodedev.coffeebase.ui.components.topbar.SortAction
+import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
 fun MyCoffeeBaseScreen(navController: NavHostController) {
@@ -50,6 +51,9 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
 
     val sortMenuExpanded = remember { mutableStateOf(false) }
     val filterMenuExpanded = remember { mutableStateOf(false) }
+
+    val searchModeActive = remember { mutableStateOf(false) }
+    val searchQuery = remember { mutableStateOf("") }
 
     coffees = when (val uiState = coffeeBaseViewModel.myCoffeeBaseUiState) {
         is MyCoffeeBaseUiState.Success -> uiState.coffees
@@ -86,17 +90,17 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                         canNavigateBack = false,
                         navigateUp = { },
                         actions = {
-                            IconButton(onClick = { }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Search,
-                                    contentDescription = stringResource(R.string.search)
-                                )
-                            }
+                            SearchAction(
+                                searchModeActive = searchModeActive,
+                                searchQuery = searchQuery,
+                                viewModel = coffeeBaseViewModel
+                            )
                             SortAction(
                                 showSortMenu = sortMenuExpanded,
                                 viewModel = coffeeBaseViewModel
                             )
                             FilterAction(
+//                                searchModeActive = searchModeActive,
                                 showFilterMenu = filterMenuExpanded,
                                 viewModel = coffeeBaseViewModel
                             )
@@ -193,39 +197,31 @@ fun CoffeeCard(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun MyCoffeeBaseScreenPreview() {
-//    CoffeeBaseTheme {
-//        Scaffold(
-//            topBar = {
-//                CoffeeBaseTopAppBar(
-//                    titleResId = R.string.my_coffeebase,
-//                    canShowNavigationDrawerIcon = true,
-//                    canNavigateBack = false,
-//                    navigateUp = {},
-//                    actions = {
-//                        IconButton(onClick = {}) {
-//                            Icon(
-//                                imageVector = Icons.Filled.Search,
-//                                contentDescription = stringResource(R.string.search)
-//                            )
-//                        }
-//                    }
-//                )
-//            },
-//            content = { padding ->
-//                CoffeesGrid(
-//                    coffees = listOf(
-//                        Coffee(
-//                            1,
-//                            "coffee1",
-//                            true,
-//                            ""
-//                        )
-//                    ), modifier = Modifier, padding
-//                )
-//            }
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun MyCoffeeBaseScreenPreview() {
+    CoffeeBaseTheme {
+        Scaffold(
+            topBar = {
+                CoffeeBaseTopAppBar(
+                    titleResId = R.string.my_coffeebase,
+                    canShowNavigationDrawerIcon = true,
+                    canNavigateBack = false,
+                    navigateUp = {},
+                    actions = {}
+                )
+            },
+            content = { padding ->
+                CoffeesGrid(
+                    coffees = listOf(
+                        Coffee(1, "coffee1", true, ""),
+                        Coffee(2, "coffee2", false, ""),
+                        Coffee(3, "coffee3", true, ""),
+                        Coffee(4, "coffee4", false, ""),
+                        Coffee(5, "coffee5", true, "")
+                    ), modifier = Modifier, padding
+                )
+            }
+        )
+    }
+}

@@ -58,6 +58,20 @@ class MyCoffeeBaseViewModel @Inject constructor(
         getCoffeesPaged(request)
     }
 
+    fun searchCoffees(searchQuery: String) {
+        viewModelScope.launch {
+            myCoffeeBaseUiState = MyCoffeeBaseUiState.Loading
+            myCoffeeBaseUiState = try {
+                MyCoffeeBaseUiState.Success(coffeeRepository.searchCoffees(searchQuery))
+            } catch (e: IOException) {
+                Log.e(TAG, "GetCoffeesPaged resulted in exception $e")
+                MyCoffeeBaseUiState.Error
+            } catch (e: HttpException) {
+                Log.e(TAG, "GetCoffeesPaged resulted in exception $e")
+                MyCoffeeBaseUiState.Error
+            }
+        }
+    }
     @VisibleForTesting
     fun getCoffeesPaged(request: PageCoffeeRequest, fetchingMore: Boolean = false) {
         viewModelScope.launch {

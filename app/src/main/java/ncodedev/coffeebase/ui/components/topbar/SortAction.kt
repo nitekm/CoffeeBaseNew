@@ -19,8 +19,9 @@ import ncodedev.coffeebase.ui.screens.mycoffeebase.MyCoffeeBaseViewModel
 
 
 @Composable
-fun SortAction(showSortMenu: MutableState<Boolean>,
-               viewModel: MyCoffeeBaseViewModel
+fun SortAction(
+    showSortMenu: MutableState<Boolean>,
+    viewModel: MyCoffeeBaseViewModel
 ) {
     IconButton(
         onClick = { showSortMenu.value = true },

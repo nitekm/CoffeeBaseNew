@@ -164,8 +164,8 @@
     <string name="coffees_in_row">My coffeebase coffees in row</string>
     <string name="search_by_anything">search by anything</string>
     <string name="sort">Sort</string>
-    <string name="do_filter">filter</string>
-    <string name="sort_default">default</string>
+    <string name="do_filter">Filter</string>
+    <string name="sort_default">Default</string>
     <string name="descending">descending</string>
     <string name="ascending">ascending</string>
     <string name="favorite">Favourite</string>
@@ -199,6 +199,7 @@
     <string name="sort_rating_desc">Sort by rating descending</string>
     <string name="sort_sca_score_asc">Sort by SCA rating ascending</string>
     <string name="sort_sca_score_desc">Sort by SCA rating descending</string>
+    <string name="close">Close</string>
 
     <!--    dropdowns-->
     <string-array name="continents">
