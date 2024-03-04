@@ -1,12 +1,11 @@
 package ncodedev.coffeebase.ui.screens.mycoffeebase.component.topbar
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.onView
 import io.mockk.mockk
+import io.mockk.verify
 import ncodedev.coffeebase.ui.components.topbar.SearchAction
 import ncodedev.coffeebase.ui.screens.mycoffeebase.MyCoffeeBaseViewModel
 import org.junit.Before
@@ -43,7 +42,20 @@ class SearchActionTest {
     }
 
     @Test
-    fun test_searchTextFieldHasSearchAsIMEAction() {
-        onView()
+    fun test_searchAction_ImeActionResultInSearchCoffeesCall() {
+        composeTestRule.onNodeWithTag("SearchActionButton", useUnmergedTree = true).performClick()
+        composeTestRule.onNodeWithTag("SearchTextField").performImeAction()
+
+        verify { mockViewModel.searchCoffees(any()) }
+    }
+
+    @Test
+    fun test_searchAction_imeActionResultInPassingEnteredTextAsParamToSearchCoffeesCall() {
+        composeTestRule.onNodeWithTag("SearchActionButton", useUnmergedTree = true).performClick()
+        composeTestRule.onNodeWithTag("SearchTextField").performTextInput("search criteria")
+        composeTestRule.onNodeWithTag("SearchTextField").performImeAction()
+
+        val expectedSearchParam = "search criteria"
+        verify { mockViewModel.searchCoffees(eq(expectedSearchParam)) }
     }
 }
