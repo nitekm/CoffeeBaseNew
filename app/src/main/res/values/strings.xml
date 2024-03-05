@@ -200,6 +200,9 @@
     <string name="sort_sca_score_asc">Sort by SCA rating ascending</string>
     <string name="sort_sca_score_desc">Sort by SCA rating descending</string>
     <string name="close">Close</string>
+    <string name="general">General\n</string>
+    <string name="additional_info">Additional informations</string>
+    <string name="tap_to_change_image">Tap to change image</string>
 
     <!--    dropdowns-->
     <string-array name="continents">
