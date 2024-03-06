@@ -1,5 +1,10 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,7 +14,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -20,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.enums.RoastProfile
 import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
@@ -39,6 +47,32 @@ fun EditCoffeeScreen(navController: NavHostController) {
     var tabIndex by remember { mutableIntStateOf(0) }
 
     val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
+    val imageBitMap: MutableState<Bitmap?> = remember {
+        mutableStateOf(null)
+    }
+    val context = LocalContext.current
+    val showDialog = remember { mutableStateOf(false) }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                context.contentResolver.openInputStream(it)?.let { stream ->
+                    val bitmap = BitmapFactory.decodeStream(stream)
+                    imageBitMap.value = bitmap
+                }
+            }
+        }
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
+            imageBitMap.value = it
+        }
+
+    ImageChoiceDialog(showDialog) { choice ->
+        when (choice) {
+            0 -> cameraLauncher.launch(null)
+            1 -> launcher.launch("image/*")
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -61,8 +95,13 @@ fun EditCoffeeScreen(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    modifier = Modifier.size(width = 200.dp, height = 250.dp),
-                    painter = painterResource(R.drawable.coffeebean),
+                    modifier = Modifier
+                        .size(width = 200.dp, height = 250.dp)
+                        .clickable { showDialog.value = true },
+                    painter = rememberAsyncImagePainter(
+                        model = imageBitMap.value?.asImageBitmap(),
+                        placeholder = painterResource(R.drawable.coffeebean)
+                    ),
                     contentDescription = stringResource(R.string.coffee_photo),
                     contentScale = ContentScale.Crop,
                 )
@@ -114,11 +153,10 @@ fun EditCoffeeScreen(navController: NavHostController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
 
-    var roastProfileDropdownState = remember {
+    val roastProfileDropdownState = remember {
         mutableStateOf(false)
     }
 
@@ -195,6 +233,27 @@ fun RatingBar(
                 tint = MaterialTheme.colorScheme.primary
             )
         }
+    }
+}
+
+@Composable
+fun ImageChoiceDialog(showDialog: MutableState<Boolean>, onOptionSelected: (Int) -> Unit) {
+    if (showDialog.value) {
+        AlertDialog(onDismissRequest = { showDialog.value = false },
+            title = { Text("Choose Image From") },
+            confirmButton = { },
+            dismissButton = { },
+            text = {
+                Column {
+                    TextButton(onClick = { onOptionSelected(0); showDialog.value = false }) {
+                        Text(text = "Camera")
+                    }
+                    TextButton(onClick = { onOptionSelected(1); showDialog.value = false }) {
+                        Text(text = "Gallery")
+                    }
+                }
+            }
+        )
     }
 }
 
