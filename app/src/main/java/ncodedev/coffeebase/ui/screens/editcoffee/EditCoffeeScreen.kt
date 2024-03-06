@@ -22,7 +22,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.enums.RoastProfile
+import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
 import ncodedev.coffeebase.ui.components.Screens
+import ncodedev.coffeebase.ui.components.TextListDropdownMenu
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
@@ -116,22 +118,22 @@ fun EditCoffeeScreen(navController: NavHostController) {
 @Composable
 fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
 
-    var roastProfileDropdownState by remember {
+    var roastProfileDropdownState = remember {
         mutableStateOf(false)
     }
 
     Column(modifier = Modifier.padding(all = 20.dp)) {
-        TextField(
+        CoffeeBaseStandardTextField(
             value = editCoffeeViewModel.coffeeName.value,
             onValueChange = { coffeeName -> editCoffeeViewModel.coffeeName.value = coffeeName },
-            label = { Text(text = stringResource(R.string.coffee_name)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            modifier = Modifier.padding(vertical = 5.dp)
+            labelResId = R.string.coffee_name,
+            keyBoardOptions = KeyboardOptions.Default
         )
-        Row(modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .padding(vertical = 7.dp)) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = 7.dp)
+        ) {
             Text(
                 text = stringResource(R.string.rating),
                 fontSize = 20.sp,
@@ -152,37 +154,27 @@ fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
             modifier = Modifier.padding(vertical = 5.dp)
 
         )
-        ExposedDropdownMenuBox(
-            modifier = Modifier
-                .padding(vertical = 5.dp),
+        TextListDropdownMenu(
             expanded = roastProfileDropdownState,
-            onExpandedChange = { roastProfileDropdownState = !roastProfileDropdownState }
-        ) {
-            TextField(
-                modifier = Modifier.menuAnchor(),
-                readOnly = true,
-                value = stringResource(editCoffeeViewModel.roastProfile.value.roastProfileResId),
-                label = { Text(text = stringResource(RoastProfile.ROAST_PROFILE.roastProfileResId)) },
-                onValueChange = { },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = roastProfileDropdownState) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors()
-            )
-            ExposedDropdownMenu(
-                expanded = roastProfileDropdownState,
-                onDismissRequest = { roastProfileDropdownState = false }
-            ) {
-                RoastProfile.entries.forEach { roastProfile ->
-                    DropdownMenuItem(
-                        text = { Text(text = stringResource(roastProfile.roastProfileResId)) },
-                        onClick = {
-                            editCoffeeViewModel.roastProfile.value = roastProfile
-                            roastProfileDropdownState = false
-                        }
-                    )
-                }
+            initialValueResId = RoastProfile.ROAST_PROFILE.roastProfileResId,
+            labelResId = R.string.roast_profile,
+            dropDownItemsList = RoastProfile.entries,
+            populateMenuItemsFunction = { roastProfile ->
+                DropdownMenuItem(
+                    text = { stringResource(roastProfile.roastProfileResId) },
+                    onClick = {
+                        editCoffeeViewModel.roastProfile.value = roastProfile
+                        roastProfileDropdownState.value = false
+                    }
+                )
             }
-        }
+        )
     }
+}
+
+@Composable
+fun OriginCoffeeInfo() {
+
 }
 
 @Composable
@@ -193,7 +185,7 @@ fun RatingBar(
     onRatingChanged: (Int) -> Unit
 ) {
     Row(modifier = modifier) {
-        for (i in 1.. maxRating) {
+        for (i in 1..maxRating) {
             Icon(
                 painter = painterResource(id = if (i <= currentRating) R.drawable.star_filled else R.drawable.star_not_filled),
                 contentDescription = "Star $i of $maxRating",
@@ -205,6 +197,7 @@ fun RatingBar(
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun EditCoffeeScreenPreview() {
