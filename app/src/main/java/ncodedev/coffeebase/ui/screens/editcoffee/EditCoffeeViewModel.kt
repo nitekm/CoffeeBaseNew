@@ -1,27 +1,27 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import ncodedev.coffeebase.data.repository.CoffeeRepository
-import ncodedev.coffeebase.model.Coffee
-import javax.inject.Inject
+import ncodedev.coffeebase.model.enums.RoastProfile
 
-sealed interface EditCoffeeUiState {
-    data class Success(val coffee: Coffee): EditCoffeeUiState
-    object Error: EditCoffeeUiState
-    object Loading: EditCoffeeUiState
-}
+class EditCoffeeViewModel: ViewModel() {
 
-@HiltViewModel
-class EditCoffeeViewModel @Inject constructor(
-    private val coffeeRepository: CoffeeRepository
-): ViewModel() {
+    var coffeeName = mutableStateOf("")
+    var origin = mutableStateOf("")
+    var roaster = mutableStateOf("")
+    var processing = mutableStateOf("")
+    var roastProfile = mutableStateOf(RoastProfile.ROAST_PROFILE)
+    var region = mutableStateOf("")
+    var continent = mutableStateOf("")
+    var farm = mutableStateOf("")
+    var cropHeight = mutableIntStateOf(0)
+    var scaRating = mutableIntStateOf(0)
+    var rating = mutableDoubleStateOf(0.0)
+    //tags
 
-    var myCoffeeBaseUiState by mutableStateOf(EditCoffeeUiState.Loading)
-        private set
+    fun saveCoffee() {
 
-
+    }
 }

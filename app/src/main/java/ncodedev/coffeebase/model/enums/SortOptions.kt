@@ -1,8 +1,8 @@
-package ncodedev.coffeebase.model
+package ncodedev.coffeebase.model.enums
 
 import ncodedev.coffeebase.R
 
-enum class SortOptions(val iconRotateValue: Float, val nameResId: Int, val sortProperty: String, val sortDirection: String, val contentDescitpionResId: Int) {
+enum class SortOptions(val iconRotateValue: Float, val nameResId: Int, val sortProperty: String, val sortDirection: String, val contentDescriptionResId: Int) {
     NAME_ASC(90f, R.string.name, "name", "ASC", R.string.sort_name_asc),
     NAME_DESC(270f, R.string.name, "name", "DESC", R.string.sort_name_desc),
     RATING_ASC(90f, R.string.rating, "rating", "ASC", R.string.sort_rating_asc),

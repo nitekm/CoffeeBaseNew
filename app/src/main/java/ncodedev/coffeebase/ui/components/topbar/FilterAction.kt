@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.model.FilterOptions
+import ncodedev.coffeebase.model.enums.FilterOptions
 import ncodedev.coffeebase.ui.screens.mycoffeebase.MyCoffeeBaseViewModel
 
 @Composable

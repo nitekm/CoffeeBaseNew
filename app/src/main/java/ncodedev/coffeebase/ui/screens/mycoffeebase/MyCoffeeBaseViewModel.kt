@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import ncodedev.coffeebase.data.repository.CoffeeRepository
 import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.model.PageCoffeeRequest
-import ncodedev.coffeebase.model.SortOptions
+import ncodedev.coffeebase.model.enums.SortOptions
 import okio.IOException
 import javax.inject.Inject
 

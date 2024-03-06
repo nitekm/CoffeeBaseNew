@@ -1,7 +1,6 @@
 package ncodedev.coffeebase.ui.components.topbar
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.model.SortOptions
+import ncodedev.coffeebase.model.enums.SortOptions
 import ncodedev.coffeebase.ui.screens.mycoffeebase.MyCoffeeBaseViewModel
 
 
@@ -74,8 +73,8 @@ private fun SortMenuItem(sortOptions: SortOptions, onSortOptionsSelected: () -> 
     DropdownMenuItem(
         leadingIcon = {
             Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = stringResource(sortOptions.contentDescitpionResId),
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(sortOptions.contentDescriptionResId),
                 modifier = Modifier.rotate(sortOptions.iconRotateValue)
             )
         },

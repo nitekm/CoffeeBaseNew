@@ -1,4 +1,4 @@
-package ncodedev.coffeebase.model
+package ncodedev.coffeebase.model.enums
 
 import ncodedev.coffeebase.R
 
