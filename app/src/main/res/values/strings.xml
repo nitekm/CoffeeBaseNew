@@ -203,6 +203,11 @@
     <string name="general">General\n</string>
     <string name="additional_info">Additional informations</string>
     <string name="tap_to_change_image">Tap to change image</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="ok">OK</string>
+    <string name="permission_required">Permission required</string>
+    <string name="storage_permission_required_go_to_settings">It seems you declined required media permission. You can go to app setting to grant it.</string>
+    <string name="storage_permission_required">In order to add image, you need to grant media permission</string>
 
     <!--    dropdowns-->
     <string-array name="continents">

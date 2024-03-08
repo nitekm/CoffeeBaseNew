@@ -1,11 +1,5 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,9 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,12 +18,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.enums.RoastProfile
 import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.TextListDropdownMenu
+import ncodedev.coffeebase.ui.components.common.CoffeeImageFromGallery
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
@@ -45,34 +36,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
         stringResource(R.string.other)
     )
     var tabIndex by remember { mutableIntStateOf(0) }
-
     val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
-    val imageBitMap: MutableState<Bitmap?> = remember {
-        mutableStateOf(null)
-    }
-    val context = LocalContext.current
-    val showDialog = remember { mutableStateOf(false) }
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                context.contentResolver.openInputStream(it)?.let { stream ->
-                    val bitmap = BitmapFactory.decodeStream(stream)
-                    imageBitMap.value = bitmap
-                }
-            }
-        }
-
-    val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-            imageBitMap.value = it
-        }
-
-    ImageChoiceDialog(showDialog) { choice ->
-        when (choice) {
-            0 -> cameraLauncher.launch(null)
-            1 -> launcher.launch("image/*")
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -94,17 +58,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
                     .align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    modifier = Modifier
-                        .size(width = 200.dp, height = 250.dp)
-                        .clickable { showDialog.value = true },
-                    painter = rememberAsyncImagePainter(
-                        model = imageBitMap.value?.asImageBitmap(),
-                        placeholder = painterResource(R.drawable.coffeebean)
-                    ),
-                    contentDescription = stringResource(R.string.coffee_photo),
-                    contentScale = ContentScale.Crop,
-                )
+                CoffeeImageFromGallery(modifier = Modifier.padding(top = 15.dp))
                 Text(
                     text = stringResource(R.string.tap_to_change_image),
                     fontSize = 16.sp,
@@ -152,6 +106,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
         }
     }
 }
+
 
 @Composable
 fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
@@ -233,27 +188,6 @@ fun RatingBar(
                 tint = MaterialTheme.colorScheme.primary
             )
         }
-    }
-}
-
-@Composable
-fun ImageChoiceDialog(showDialog: MutableState<Boolean>, onOptionSelected: (Int) -> Unit) {
-    if (showDialog.value) {
-        AlertDialog(onDismissRequest = { showDialog.value = false },
-            title = { Text("Choose Image From") },
-            confirmButton = { },
-            dismissButton = { },
-            text = {
-                Column {
-                    TextButton(onClick = { onOptionSelected(0); showDialog.value = false }) {
-                        Text(text = "Camera")
-                    }
-                    TextButton(onClick = { onOptionSelected(1); showDialog.value = false }) {
-                        Text(text = "Gallery")
-                    }
-                }
-            }
-        )
     }
 }
 

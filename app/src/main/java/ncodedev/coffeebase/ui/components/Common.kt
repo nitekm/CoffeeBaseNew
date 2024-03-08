@@ -1,6 +1,5 @@
 package ncodedev.coffeebase.ui.components
 
-import androidx.compose.foundation.excludeFromSystemGesture
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -10,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import ncodedev.coffeebase.model.enums.RoastProfile
 
 @Composable
 fun CoffeeBaseStandardTextField(
