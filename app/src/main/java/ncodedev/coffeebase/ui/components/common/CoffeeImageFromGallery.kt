@@ -113,7 +113,7 @@ fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
             },
         painter = rememberAsyncImagePainter(
             model = imageBitMap.value,
-            placeholder = painterResource(R.drawable.coffeebean)
+            error = painterResource(R.drawable.coffeebean),
         ),
         contentDescription = stringResource(R.string.coffee_photo),
         contentScale = ContentScale.Crop,
@@ -124,7 +124,7 @@ fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
             isPermanentlyDeclined = !ActivityCompat.shouldShowRequestPermissionRationale(
                 LocalContext.current as Activity, permission
             ),
-            onDismiss = { permissionsViewModel::dismissDialog },
+            onDismiss = permissionsViewModel::dismissDialog,
             onOkClick = {
                 permissionsViewModel.dismissDialog()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

@@ -1,9 +1,10 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 
 class PermissionsViewModel : ViewModel() {
-    val visiblePermissionDialogQueue = mutableListOf<String>()
+    val visiblePermissionDialogQueue = mutableStateListOf<String>()
 
     fun dismissDialog() {
         visiblePermissionDialogQueue.removeFirst()
@@ -13,8 +14,8 @@ class PermissionsViewModel : ViewModel() {
         permission: String,
         isGranted: Boolean
     ) {
-        if (!isGranted) {
-            visiblePermissionDialogQueue.add(0, permission)
+        if (!isGranted && !visiblePermissionDialogQueue.contains(permission)) {
+            visiblePermissionDialogQueue.add(permission)
         }
     }
 }
