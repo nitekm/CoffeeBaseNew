@@ -4,13 +4,10 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -35,76 +32,37 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.ui.screens.editcoffee.PermissionsViewModel
-import ncodedev.coffeebase.ui.utils.ReadMediaPermissionResultLauncher
+import ncodedev.coffeebase.ui.screens.editcoffee.CoffeeImageViewModel
+import ncodedev.coffeebase.ui.utils.*
 
 @Composable
 fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val permissionsViewModel = viewModel<PermissionsViewModel>()
-    val dialogQueue = permissionsViewModel.visiblePermissionDialogQueue
-    val imageBitMap: MutableState<Bitmap?> = remember { mutableStateOf(null) }
-    val showDialog = remember { mutableStateOf(false) }
+    val coffeeImageViewModel = viewModel<CoffeeImageViewModel>()
+    val dialogQueue = coffeeImageViewModel.visiblePermissionDialogQueue
 
-    //TODO: przesunac launchery do innego pliku, następnie po wybraniu opcji z dialogu czy camera czy gallery odpalic odpowiedni
-    // request o permissiony. Permissiony on isGranted wolaja view model z parametrem ktiory permisison zostal udzielony,
-    //  view model zmiania stateOfBooleany od odpowiedniej opcji (camera, gallery) i odpala launcher do wybory obrazka camera lub gallery
-    val xyz = ReadMediaPermissionResultLauncher(permissionsViewModel = permissionsViewModel)
-    val readMediaPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            permissionsViewModel.onPermissionResult(
-                permission = Manifest.permission.READ_MEDIA_IMAGES,
-                isGranted = isGranted
-            )
-            if (isGranted) {
+    val showGalleryOrCameraDialog = remember { mutableStateOf(false) }
 
-                showDialog.value = true
-            }
-        }
-    )
+    val readMediaPermissionResult =
+        readMediaPermissionResultLauncher(coffeeImageViewModel = coffeeImageViewModel)
+    val readWriteStoragePermissionResult =
+        readWriteStoragePermissionResultLauncher(coffeeImageViewModel = coffeeImageViewModel)
+    val cameraPermissionResult =
+        cameraPermissionResultLauncher(coffeeImageViewModel = coffeeImageViewModel)
 
+    val galleryResult =
+        galleryLauncher(coffeeImageViewModel = coffeeImageViewModel)
+    val cameraResult =
+        cameraLauncher(coffeeImageViewModel = coffeeImageViewModel)
 
-    val readWriteStoragePermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { perms ->
-            perms.keys.forEach { permission ->
-                permissionsViewModel.onPermissionResult(
-                    permission = permission,
-                    isGranted = perms[permission] == true
-                )
-                if (perms.values.all { it }) {
-                    showDialog.value = true
-                }
-            }
-        }
-    )
-
-    val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                context.contentResolver.openInputStream(it)?.let { stream ->
-                    val bitmap = BitmapFactory.decodeStream(stream)
-                    imageBitMap.value = bitmap
-                }
-            }
-        }
-
-    val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-            imageBitMap.value = it
-        }
-
-    ImageChoiceDialog(showDialog) { choice ->
+    ImageChoiceDialog(showGalleryOrCameraDialog) { choice ->
         when (choice) {
             0 -> {
-                permissionsViewModel.dismissDialog()
+                coffeeImageViewModel.dismissDialog()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    readMediaPermissionResultLauncher.launch(
-                        Manifest.permission.READ_MEDIA_IMAGES
-                    )
+                    readMediaPermissionResult.launch(Manifest.permission.READ_MEDIA_IMAGES)
                 } else {
-                    readWriteStoragePermissionResultLauncher.launch(
+                    readWriteStoragePermissionResult.launch(
                         listOf(
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -112,7 +70,11 @@ fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
                     )
                 }
             }
-            1 -> galleryLauncher.launch("image/*")
+
+            1 -> {
+                coffeeImageViewModel.dismissDialog()
+                cameraPermissionResult.launch(Manifest.permission.CAMERA)
+            }
         }
     }
     Image(
@@ -120,21 +82,10 @@ fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
             .clip(RoundedCornerShape(20.dp))
             .size(width = 200.dp, height = 250.dp)
             .clickable {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    readMediaPermissionResultLauncher.launch(
-                        Manifest.permission.READ_MEDIA_IMAGES
-                    )
-                } else {
-                    readWriteStoragePermissionResultLauncher.launch(
-                        listOf(
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        ).toTypedArray()
-                    )
-                }
+                showGalleryOrCameraDialog.value = true
             },
         painter = rememberAsyncImagePainter(
-            model = imageBitMap.value,
+            model = coffeeImageViewModel.imageBitMap.value,
             error = painterResource(R.drawable.coffeebean),
         ),
         contentDescription = stringResource(R.string.coffee_photo),
@@ -146,15 +97,15 @@ fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
             isPermanentlyDeclined = !ActivityCompat.shouldShowRequestPermissionRationale(
                 LocalContext.current as Activity, permission
             ),
-            onDismiss = permissionsViewModel::dismissDialog,
+            onDismiss = coffeeImageViewModel::dismissDialog,
             onOkClick = {
-                permissionsViewModel.dismissDialog()
+                coffeeImageViewModel.dismissDialog()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    readMediaPermissionResultLauncher.launch(
+                    readMediaPermissionResult.launch(
                         Manifest.permission.READ_MEDIA_IMAGES
                     )
                 } else {
-                    readWriteStoragePermissionResultLauncher.launch(
+                    readWriteStoragePermissionResult.launch(
                         listOf(
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -164,6 +115,12 @@ fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
             },
             onGoToSettings = { context.openAppSettings() }
         )
+    }
+    if (coffeeImageViewModel.shouldLaunchGallery.value) {
+        galleryResult.launch("image/*")
+    }
+    if (coffeeImageViewModel.shouldLaunchCamera.value) {
+        cameraResult.launch()
     }
 }
 
@@ -175,6 +132,8 @@ fun Context.openAppSettings() {
     ).also(::startActivity)
 }
 
+
+//TODO poprawic bo wyglada bardzo zle :D
 @Composable
 fun ImageChoiceDialog(showDialog: MutableState<Boolean>, onOptionSelected: (Int) -> Unit) {
     if (showDialog.value) {
@@ -196,7 +155,10 @@ fun ImageChoiceDialog(showDialog: MutableState<Boolean>, onOptionSelected: (Int)
                             Text(text = stringResource(R.string.gallery))
                         }
                     }
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = {
+                        onOptionSelected(1)
+                        showDialog.value = false
+                    }) {
                         Column {
                             Image(
                                 painter = painterResource(R.drawable.add_photo_camera),
