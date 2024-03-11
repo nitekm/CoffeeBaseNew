@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import ncodedev.coffeebase.model.enums.Continent
 import ncodedev.coffeebase.model.enums.RoastProfile
 
 class EditCoffeeViewModel : ViewModel() {
@@ -15,7 +16,7 @@ class EditCoffeeViewModel : ViewModel() {
     var processing = mutableStateOf("")
     var roastProfile = mutableStateOf(RoastProfile.ROAST_PROFILE)
     var region = mutableStateOf("")
-    var continent = mutableStateOf("")
+    var continent = mutableStateOf(Continent.CONTINENT)
     var farm = mutableStateOf("")
     var cropHeight = mutableIntStateOf(0)
     var scaRating = mutableIntStateOf(0)

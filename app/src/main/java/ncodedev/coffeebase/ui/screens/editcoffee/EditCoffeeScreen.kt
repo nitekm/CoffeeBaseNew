@@ -24,6 +24,8 @@ import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.TextListDropdownMenu
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
+import ncodedev.coffeebase.ui.screens.editcoffee.tabs.GeneralCoffeeInfo
+import ncodedev.coffeebase.ui.screens.editcoffee.tabs.OriginCoffeeInfo
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
@@ -58,6 +60,8 @@ fun EditCoffeeScreen(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CoffeeImageFromGallery(modifier = Modifier.padding(top = 15.dp))
+                //TODO gdzies tutaj jakis plusik maly ktory odpali dialog z mozliwoscia dodania tagow
+                // plusik powinien byc na dole atagi powinny pojawiac sie nad plusikiem najlepiej zawijac sie
                 Text(
                     text = stringResource(R.string.tap_to_change_image),
                     fontSize = 16.sp,
@@ -84,7 +88,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
                 Box {
                     when (tabIndex) {
                         0 -> GeneralCoffeeInfo(editCoffeeViewModel)
-//                    1 -> OriginCoffeeInfo(innerPadding)
+                        1 -> OriginCoffeeInfo(editCoffeeViewModel)
 //                    2 -> OtherCoffeeInfo(innerPadding)
                     }
                 }
@@ -103,92 +107,6 @@ fun EditCoffeeScreen(navController: NavHostController) {
                     modifier = Modifier.padding(horizontal = 40.dp, vertical = 5.dp)
                 )
             }
-        }
-    }
-}
-
-
-@Composable
-fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
-
-    val roastProfileDropdownState = remember {
-        mutableStateOf(false)
-    }
-
-    Column(modifier = Modifier.padding(all = 20.dp)) {
-        CoffeeBaseStandardTextField(
-            value = editCoffeeViewModel.coffeeName.value,
-            onValueChange = { coffeeName -> editCoffeeViewModel.validateAndSetCoffeeName(coffeeName)},
-            labelResId = R.string.coffee_name,
-            keyBoardOptions = KeyboardOptions.Default,
-            isValid = editCoffeeViewModel.isNameValid.value,
-            validationFailMessage = stringResource(R.string.constraint_coffee_name_not_empty)
-        )
-        Row(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 7.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.rating),
-                fontSize = 20.sp,
-                modifier = Modifier.padding(end = 10.dp, top = 10.dp)
-            )
-            RatingBar(
-                modifier = Modifier.padding(vertical = 5.dp),
-                currentRating = editCoffeeViewModel.rating.doubleValue.toInt(),
-                onRatingChanged = { newRating -> editCoffeeViewModel.rating.doubleValue = newRating.toDouble() }
-            )
-        }
-        TextField(
-            value = editCoffeeViewModel.roaster.value,
-            onValueChange = { roaster -> editCoffeeViewModel.roaster.value = roaster },
-            label = { Text(text = stringResource(R.string.roaster)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            modifier = Modifier.padding(vertical = 5.dp)
-
-        )
-        TextListDropdownMenu(
-            expanded = roastProfileDropdownState,
-            initialValueResId = RoastProfile.ROAST_PROFILE.roastProfileResId,
-            labelResId = R.string.roast_profile,
-            dropDownItemsList = RoastProfile.entries,
-            populateMenuItemsFunction = { roastProfile ->
-                DropdownMenuItem(
-                    text = { stringResource(roastProfile.roastProfileResId) },
-                    onClick = {
-                        editCoffeeViewModel.roastProfile.value = roastProfile
-                        roastProfileDropdownState.value = false
-                    }
-                )
-            }
-        )
-    }
-}
-
-@Composable
-fun OriginCoffeeInfo() {
-
-}
-
-@Composable
-fun RatingBar(
-    modifier: Modifier = Modifier,
-    maxRating: Int = 6,
-    currentRating: Int,
-    onRatingChanged: (Int) -> Unit
-) {
-    Row(modifier = modifier) {
-        for (i in 1..maxRating) {
-            Icon(
-                painter = painterResource(id = if (i <= currentRating) R.drawable.star_filled else R.drawable.star_not_filled),
-                contentDescription = "Star $i of $maxRating",
-                modifier = Modifier
-                    .clickable { onRatingChanged(i) }
-                    .size(30.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
         }
     }
 }

@@ -18,7 +18,7 @@ fun CoffeeBaseStandardTextField(
     labelResId: Int,
     keyBoardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
     modifier: Modifier = Modifier.padding(vertical = 5.dp),
-    isValid: Boolean = false,
+    isValid: Boolean = true,
     validationFailMessage: String = ""
 ) {
     TextField(
