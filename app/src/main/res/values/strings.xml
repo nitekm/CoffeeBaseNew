@@ -208,6 +208,7 @@
     <string name="permission_required">Permission required</string>
     <string name="storage_permission_required_go_to_settings">It seems you declined required media permission. You can go to app setting to grant it.</string>
     <string name="storage_permission_required">In order to add image, you need to grant media permission</string>
+    <string name="select_image_from">Select image from</string>
 
     <!--    dropdowns-->
     <string-array name="continents">

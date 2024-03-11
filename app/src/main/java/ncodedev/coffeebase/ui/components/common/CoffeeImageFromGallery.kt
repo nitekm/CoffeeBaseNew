@@ -10,9 +10,7 @@ import android.provider.Settings
 import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -21,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -28,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
@@ -132,42 +132,61 @@ fun Context.openAppSettings() {
     ).also(::startActivity)
 }
 
-
-//TODO poprawic bo wyglada bardzo zle :D
 @Composable
 fun ImageChoiceDialog(showDialog: MutableState<Boolean>, onOptionSelected: (Int) -> Unit) {
     if (showDialog.value) {
         AlertDialog(onDismissRequest = { showDialog.value = false },
-            title = { Text("Choose Image From") },
+            title = { Text(
+                text = stringResource(R.string.select_image_from),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(Alignment.CenterHorizontally),
+            ) },
             confirmButton = { },
             dismissButton = { },
             text = {
-                Row {
-                    Button(onClick = {
-                        onOptionSelected(0)
-                        showDialog.value = false
-                    }) {
-                        Column {
-                            Image(
-                                painter = painterResource(R.drawable.add_photo_gallery),
-                                contentDescription = stringResource(R.string.gallery)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.add_photo_gallery),
+                            contentDescription = stringResource(R.string.gallery),
+                            modifier = Modifier.size(65.dp)
+                        )
+                        Button(onClick = {
+                            onOptionSelected(0)
+                            showDialog.value = false
+                        }) {
+                            Text(
+                                text = stringResource(R.string.gallery),
+                                fontSize = 15.sp
                             )
-                            Text(text = stringResource(R.string.gallery))
                         }
                     }
-                    Button(onClick = {
-                        onOptionSelected(1)
-                        showDialog.value = false
-                    }) {
-                        Column {
-                            Image(
-                                painter = painterResource(R.drawable.add_photo_camera),
-                                contentDescription = stringResource(R.string.camera)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.add_photo_camera),
+                            contentDescription = stringResource(R.string.gallery),
+                            modifier = Modifier.size(65.dp)
+                        )
+                        Button(onClick = {
+                            onOptionSelected(1)
+                            showDialog.value = false
+                        }) {
+                            Text(
+                                text = stringResource(R.string.camera),
+                                fontSize = 15.sp
                             )
-                            Text(text = stringResource(R.string.camera))
                         }
                     }
-
                 }
             }
         )
