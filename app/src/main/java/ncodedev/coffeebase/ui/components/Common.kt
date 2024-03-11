@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -16,7 +17,9 @@ fun CoffeeBaseStandardTextField(
     onValueChange: (String) -> Unit,
     labelResId: Int,
     keyBoardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-    modifier: Modifier = Modifier.padding(vertical = 5.dp)
+    modifier: Modifier = Modifier.padding(vertical = 5.dp),
+    isValid: Boolean = false,
+    validationFailMessage: String = ""
 ) {
     TextField(
         value = value,
@@ -24,8 +27,16 @@ fun CoffeeBaseStandardTextField(
         label = { Text(text = stringResource(labelResId)) },
         singleLine = true,
         keyboardOptions = keyBoardOptions,
+        isError = !isValid,
         modifier = modifier
     )
+    if (!isValid) {
+        Text(
+            text = validationFailMessage,
+            color = Color.Red,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

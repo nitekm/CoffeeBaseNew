@@ -6,9 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import ncodedev.coffeebase.model.enums.RoastProfile
 
-class EditCoffeeViewModel: ViewModel() {
+class EditCoffeeViewModel : ViewModel() {
 
     var coffeeName = mutableStateOf("")
+    var isNameValid = mutableStateOf(true)
     var origin = mutableStateOf("")
     var roaster = mutableStateOf("")
     var processing = mutableStateOf("")
@@ -19,9 +20,14 @@ class EditCoffeeViewModel: ViewModel() {
     var cropHeight = mutableIntStateOf(0)
     var scaRating = mutableIntStateOf(0)
     var rating = mutableDoubleStateOf(0.0)
-    //tags
+    //TODO tags
 
     fun saveCoffee() {
 
+    }
+
+    fun validateAndSetCoffeeName(coffeeName: String) {
+        this.coffeeName.value = coffeeName
+        isNameValid.value = coffeeName.isNotEmpty()
     }
 }

@@ -23,7 +23,6 @@ import ncodedev.coffeebase.model.enums.RoastProfile
 import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.TextListDropdownMenu
-import ncodedev.coffeebase.ui.components.common.CoffeeImageFromGallery
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
@@ -92,6 +91,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
             }
             Button(
                 onClick = { editCoffeeViewModel.saveCoffee() },
+                enabled = editCoffeeViewModel.isNameValid.value,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 30.dp)
@@ -118,9 +118,11 @@ fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
     Column(modifier = Modifier.padding(all = 20.dp)) {
         CoffeeBaseStandardTextField(
             value = editCoffeeViewModel.coffeeName.value,
-            onValueChange = { coffeeName -> editCoffeeViewModel.coffeeName.value = coffeeName },
+            onValueChange = { coffeeName -> editCoffeeViewModel.validateAndSetCoffeeName(coffeeName)},
             labelResId = R.string.coffee_name,
-            keyBoardOptions = KeyboardOptions.Default
+            keyBoardOptions = KeyboardOptions.Default,
+            isValid = editCoffeeViewModel.isNameValid.value,
+            validationFailMessage = stringResource(R.string.constraint_coffee_name_not_empty)
         )
         Row(
             modifier = Modifier

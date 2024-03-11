@@ -1,4 +1,4 @@
-package ncodedev.coffeebase.ui.components.common
+package ncodedev.coffeebase.ui.screens.editcoffee
 
 import android.Manifest
 import android.app.Activity
@@ -32,7 +32,8 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.ui.screens.editcoffee.CoffeeImageViewModel
+import ncodedev.coffeebase.ui.components.common.PermissionDialog
+import ncodedev.coffeebase.ui.components.common.StoragePermissionTextProvider
 import ncodedev.coffeebase.ui.utils.*
 
 @Composable
