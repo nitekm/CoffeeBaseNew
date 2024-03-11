@@ -210,21 +210,6 @@
     <string name="storage_permission_required">In order to add image, you need to grant media permission</string>
     <string name="select_image_from">Select image from</string>
 
-    <!--    dropdowns-->
-    <string-array name="continents">
-        <item>@string/continent</item>
-        <item>@string/africa</item>
-        <item>@string/asia</item>
-        <item>@string/south_america</item>
-    </string-array>
-
-    <string-array name="roastProfiles">
-        <item>@string/roast_profile</item>
-        <item>@string/light</item>
-        <item>@string/omniroast</item>
-        <item>@string/dark</item>
-    </string-array>
-
     <string-array name="coffees_in_row">
         <item>2</item>
         <item>3</item>

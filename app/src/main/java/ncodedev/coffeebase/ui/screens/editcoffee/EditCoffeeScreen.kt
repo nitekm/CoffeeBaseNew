@@ -1,17 +1,13 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,13 +15,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.model.enums.RoastProfile
-import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
 import ncodedev.coffeebase.ui.components.Screens
-import ncodedev.coffeebase.ui.components.TextListDropdownMenu
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.GeneralCoffeeInfo
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.OriginCoffeeInfo
+import ncodedev.coffeebase.ui.screens.editcoffee.tabs.OtherCoffeeInfo
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
@@ -89,7 +83,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
                     when (tabIndex) {
                         0 -> GeneralCoffeeInfo(editCoffeeViewModel)
                         1 -> OriginCoffeeInfo(editCoffeeViewModel)
-//                    2 -> OtherCoffeeInfo(innerPadding)
+                        2 -> OtherCoffeeInfo(editCoffeeViewModel)
                     }
                 }
             }
