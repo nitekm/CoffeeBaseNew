@@ -1,4 +1,4 @@
-package ncodedev.coffeebase.ui.screens.editcoffee
+package ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage
 
 import android.Manifest
 import android.graphics.Bitmap

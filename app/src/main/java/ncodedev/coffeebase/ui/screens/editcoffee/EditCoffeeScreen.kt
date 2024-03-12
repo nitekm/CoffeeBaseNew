@@ -21,9 +21,12 @@ import androidx.navigation.compose.rememberNavController
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
+import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageFromGallery
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.GeneralCoffeeInfo
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.OriginCoffeeInfo
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.OtherCoffeeInfo
+import ncodedev.coffeebase.ui.screens.editcoffee.tags.AddTagDialog
+import ncodedev.coffeebase.ui.screens.editcoffee.tags.DisplayTag
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
@@ -39,7 +42,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
     var tabIndex by remember { mutableIntStateOf(0) }
 
     val tabRowScrollState = rememberScrollState()
-    var showAddTagDialog = remember { mutableStateOf(false) }
+    val showAddTagDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -62,8 +65,6 @@ fun EditCoffeeScreen(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CoffeeImageFromGallery(modifier = Modifier.padding(top = 15.dp))
-                //TODO gdzies tutaj jakis plusik maly ktory odpali dialog z mozliwoscia dodania tagow
-                // plusik powinien byc na dole atagi powinny pojawiac sie nad plusikiem najlepiej zawijac sie
                 Text(
                     text = stringResource(R.string.tap_to_change_image),
                     fontSize = 16.sp,

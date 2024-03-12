@@ -1,4 +1,4 @@
-package ncodedev.coffeebase.ui.screens.editcoffee
+package ncodedev.coffeebase.ui.screens.editcoffee.tags
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding

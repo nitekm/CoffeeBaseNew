@@ -9,7 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import ncodedev.coffeebase.ui.screens.editcoffee.CoffeeImageViewModel
+import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageViewModel
 
 @Composable
 fun readMediaPermissionResultLauncher(
