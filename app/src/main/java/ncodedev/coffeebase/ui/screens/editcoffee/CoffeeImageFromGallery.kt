@@ -81,7 +81,7 @@ fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
     Image(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
-            .size(width = 200.dp, height = 250.dp)
+            .size(width = 165.dp, height = 210.dp)
             .clickable {
                 showGalleryOrCameraDialog.value = true
             },

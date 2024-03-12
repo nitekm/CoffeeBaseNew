@@ -214,11 +214,11 @@ fun MyCoffeeBaseScreenPreview() {
             content = { padding ->
                 CoffeesGrid(
                     coffees = listOf(
-                        Coffee(1, "coffee1", true, ""),
-                        Coffee(2, "coffee2", false, ""),
-                        Coffee(3, "coffee3", true, ""),
-                        Coffee(4, "coffee4", false, ""),
-                        Coffee(5, "coffee5", true, "")
+                        Coffee(1, "coffee1", true, "", emptyList()),
+                        Coffee(2, "coffee2", false, "", emptyList()),
+                        Coffee(3, "coffee3", true, "", emptyList()),
+                        Coffee(4, "coffee4", false, "", emptyList()),
+                        Coffee(5, "coffee5", true, "", emptyList())
                     ), modifier = Modifier, padding
                 )
             }

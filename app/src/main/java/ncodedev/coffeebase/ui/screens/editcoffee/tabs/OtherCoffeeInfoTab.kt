@@ -10,7 +10,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
+import ncodedev.coffeebase.ui.components.common.CoffeeBaseStandardTextField
 import ncodedev.coffeebase.ui.screens.editcoffee.EditCoffeeViewModel
 
 @Composable

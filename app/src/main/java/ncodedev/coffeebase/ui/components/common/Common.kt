@@ -1,4 +1,4 @@
-package ncodedev.coffeebase.ui.components
+package ncodedev.coffeebase.ui.components.common
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,7 +67,7 @@ fun <T> TextListDropdownMenu(
             expanded = expanded.value,
             onDismissRequest = { expanded.value = false }
         ) {
-            dropDownItemsList.forEach{ item -> populateMenuItemsFunction(item) }
+            dropDownItemsList.forEach{ populateMenuItemsFunction(it) }
         }
     }
 }

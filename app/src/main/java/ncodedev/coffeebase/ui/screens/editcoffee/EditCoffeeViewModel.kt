@@ -1,8 +1,10 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import ncodedev.coffeebase.model.Tag
 import ncodedev.coffeebase.model.enums.Continent
 import ncodedev.coffeebase.model.enums.RoastProfile
 
@@ -22,15 +24,15 @@ class EditCoffeeViewModel : ViewModel() {
     var scaRating = mutableStateOf("")
     val isScaRatingValid = mutableStateOf(true)
     var rating = mutableDoubleStateOf(0.0)
-    //TODO tags
+    var tags = mutableStateListOf<Tag>()
 
     fun saveCoffee() {
-
+        TODO()
     }
 
     fun validateAndSetCoffeeName(coffeeName: String) {
         this.coffeeName.value = coffeeName
-        isNameValid.value = coffeeName.isNotEmpty()
+        isNameValid.value = coffeeName.isNotBlank()
     }
 
     fun validateAndSetCropHeight(cropHeight: Int) {

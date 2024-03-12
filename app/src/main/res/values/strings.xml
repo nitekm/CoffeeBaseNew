@@ -209,6 +209,9 @@
     <string name="storage_permission_required_go_to_settings">It seems you declined required media permission. You can go to app setting to grant it.</string>
     <string name="storage_permission_required">In order to add image, you need to grant media permission</string>
     <string name="select_image_from">Select image from</string>
+    <string name="add_tag">Add tag</string>
+    <string name="tag_name">Tag name</string>
+    <string name="cancel">Cancel</string>
 
     <string-array name="coffees_in_row">
         <item>2</item>

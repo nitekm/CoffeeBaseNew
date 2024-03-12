@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.enums.RoastProfile
-import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
-import ncodedev.coffeebase.ui.components.TextListDropdownMenu
+import ncodedev.coffeebase.ui.components.common.CoffeeBaseStandardTextField
+import ncodedev.coffeebase.ui.components.common.TextListDropdownMenu
 import ncodedev.coffeebase.ui.screens.editcoffee.EditCoffeeViewModel
 
 @Composable

@@ -4,5 +4,6 @@ data class Coffee(
     val id: Long,
     val name: String,
     val favourite: Boolean,
-    val imageUrl: String
+    val imageUrl: String,
+    val tags: List<Tag>
 )

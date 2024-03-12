@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.enums.Continent
-import ncodedev.coffeebase.ui.components.CoffeeBaseStandardTextField
-import ncodedev.coffeebase.ui.components.TextListDropdownMenu
+import ncodedev.coffeebase.ui.components.common.CoffeeBaseStandardTextField
+import ncodedev.coffeebase.ui.components.common.TextListDropdownMenu
 import ncodedev.coffeebase.ui.screens.editcoffee.EditCoffeeViewModel
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 

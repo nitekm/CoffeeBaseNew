@@ -1,6 +1,10 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,13 +29,17 @@ import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 @Composable
 fun EditCoffeeScreen(navController: NavHostController) {
 
+    val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
+
     val tabItems = listOf(
         stringResource(R.string.general),
         stringResource(R.string.origin),
         stringResource(R.string.other)
     )
     var tabIndex by remember { mutableIntStateOf(0) }
-    val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
+
+    val tabRowScrollState = rememberScrollState()
+    var showAddTagDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -63,6 +71,28 @@ fun EditCoffeeScreen(navController: NavHostController) {
                     color = Color.Gray,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
+                Button(
+                    onClick = { showAddTagDialog.value = true },
+                    modifier = Modifier.padding(bottom = 5.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.AddCircle,
+                        contentDescription = stringResource(R.string.add_tag),
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 5.dp)
+                    )
+                    Text(text = stringResource(R.string.add_tag), fontSize = 13.sp)
+                }
+                AddTagDialog(showAddTagDialog = showAddTagDialog, editCoffeeViewModel)
+                Row(modifier = Modifier.horizontalScroll(tabRowScrollState)) {
+                    editCoffeeViewModel.tags.forEach {tag ->
+                        DisplayTag(
+                            tagName = tag.name,
+                            color = Integer.parseInt(tag.color)
+                        )
+                    }
+                }
                 HorizontalDivider()
                 TabRow(
                     selectedTabIndex = tabIndex,
@@ -92,7 +122,11 @@ fun EditCoffeeScreen(navController: NavHostController) {
                 enabled = editCoffeeViewModel.isNameValid.value,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 30.dp)
+                    .padding(bottom = 30.dp),
+                elevation = ButtonDefaults.elevatedButtonElevation(
+                    defaultElevation = 15.dp,
+                    pressedElevation = 20.dp
+                )
             ) {
                 Text(
                     text = stringResource(R.string.save),
