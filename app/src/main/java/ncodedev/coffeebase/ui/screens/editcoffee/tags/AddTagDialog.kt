@@ -24,7 +24,6 @@ fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: E
 
     val tagViewModel: TagViewModel = hiltViewModel()
     val colorPickerController = rememberColorPickerController()
-//    val dropdownExpanded = remember { mutableStateOf(false) }
 
     if (showAddTagDialog.value) {
         tagViewModel.getTags()
@@ -54,24 +53,26 @@ fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: E
                             tagViewModel.showHintDropdown.value = !tagViewModel.showHintDropdown.value
                         }
                     ) {
-                        OutlinedTextField(
-                            modifier = Modifier.menuAnchor(),
-                            label = { Text(text = stringResource(R.string.tag_name)) },
-                            value = tagViewModel.tagName.value,
-                            onValueChange = tagViewModel::validateAndSetTagName,
-                            singleLine = true,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = tagViewModel.color.value,
-                                unfocusedContainerColor = tagViewModel.color.value
-                            ),
-                            isError = !tagViewModel.isTagNameValid.value,
-                        )
-                        if (!tagViewModel.isTagNameValid.value) {
-                            Text(
-                                text = stringResource(R.string.constraint_tag_name_not_empty),
-                                color = Color.Red,
-                                modifier = Modifier.padding(start = 10.dp)
+                        Column {
+                            OutlinedTextField(
+                                modifier = Modifier.menuAnchor(),
+                                label = { Text(text = stringResource(R.string.tag_name)) },
+                                value = tagViewModel.tagName.value,
+                                onValueChange = tagViewModel::validateAndSetTagName,
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = tagViewModel.color.value,
+                                    unfocusedContainerColor = tagViewModel.color.value
+                                ),
+                                isError = !tagViewModel.isTagNameValid.value,
                             )
+                            if (!tagViewModel.isTagNameValid.value) {
+                                Text(
+                                    text = stringResource(R.string.constraint_tag_name_not_empty),
+                                    color = Color.Red,
+                                    modifier = Modifier.padding(start = 10.dp)
+                                )
+                            }
                         }
                         ExposedDropdownMenu(
                             expanded = tagViewModel.showHintDropdown.value,
@@ -111,8 +112,10 @@ fun createTagAndCloseDialog(
     editCoffeeViewModel: EditCoffeeViewModel
 ) {
     tagViewModel.createTag()
-    tagViewModel.tag.value?.let { editCoffeeViewModel.tags.add(it) }
-    showAddTagDialog.value = false
+    if (tagViewModel.isTagNameValid.value) {
+        tagViewModel.tag.value?.let { editCoffeeViewModel.tags.add(it) }
+        showAddTagDialog.value = false
+    }
 }
 
 @Preview(showBackground = true)

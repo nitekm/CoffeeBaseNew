@@ -42,7 +42,6 @@ class TagViewModel @Inject constructor(
     val showHintDropdown = mutableStateOf(false)
     fun validateAndSetTagName(tagName: String) {
         this.tagName.value = tagName
-        isTagNameValid.value = tagName.isNotBlank()
         tagHints.value = tags.value.filter { tag -> tag.name.contains(tagName, ignoreCase = true) }.take(5)
         if (tagHints.value.isNotEmpty()) {
             showHintDropdown.value = true
@@ -64,6 +63,10 @@ class TagViewModel @Inject constructor(
     }
 
     fun createTag() {
+        isTagNameValid.value = tagName.value.isNotBlank()
+        if (!isTagNameValid.value) {
+            return
+        }
         val newTag = Tag(
             id = null,
             name = tagName.value,
