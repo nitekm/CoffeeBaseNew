@@ -58,7 +58,7 @@ fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: E
                                 modifier = Modifier.menuAnchor(),
                                 label = { Text(text = stringResource(R.string.tag_name)) },
                                 value = tagViewModel.tagName.value,
-                                onValueChange = tagViewModel::validateAndSetTagName,
+                                onValueChange = tagViewModel::setTagNameAndUpdateTagHints,
                                 singleLine = true,
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedContainerColor = tagViewModel.color.value,

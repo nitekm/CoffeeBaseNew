@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.model.Tag
 import ncodedev.coffeebase.model.enums.Continent
 import ncodedev.coffeebase.model.enums.RoastProfile
@@ -27,7 +28,26 @@ class EditCoffeeViewModel : ViewModel() {
     var tags = mutableStateListOf<Tag>()
 
     fun saveCoffee() {
+        if (validateCoffee()) return
+        val coffee = Coffee(
+            coffeeName = coffeeName.value,
+            origin = origin.value,
+            roaster = roaster.value,
+            processing = processing.value,
+            roastProfile = roastProfile.value,
+            region = region.value,
+            continent = continent.value,
+            farm = farm.value,
+            cropHeight = cropHeight.value.toIntOrNull(),
+            scaRating = scaRating.value.toIntOrNull(),
+            rating = rating.doubleValue,
+            tags = tags.value
+        )
         TODO()
+    }
+
+    fun validateCoffee() {
+        return
     }
 
     fun validateAndSetCoffeeName(coffeeName: String) {

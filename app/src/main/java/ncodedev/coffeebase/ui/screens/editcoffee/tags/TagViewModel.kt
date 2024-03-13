@@ -40,7 +40,7 @@ class TagViewModel @Inject constructor(
     val tags = mutableStateOf(listOf<Tag>())
     val tagHints = mutableStateOf(listOf<Tag>())
     val showHintDropdown = mutableStateOf(false)
-    fun validateAndSetTagName(tagName: String) {
+    fun setTagNameAndUpdateTagHints(tagName: String) {
         this.tagName.value = tagName
         tagHints.value = tags.value.filter { tag -> tag.name.contains(tagName, ignoreCase = true) }.take(5)
         if (tagHints.value.isNotEmpty()) {
