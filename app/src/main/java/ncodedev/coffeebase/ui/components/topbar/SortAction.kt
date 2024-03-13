@@ -48,7 +48,7 @@ fun SortAction(
             onClick = {},
             modifier = Modifier.testTag("SortTitleMenuItem")
         )
-        Divider()
+        HorizontalDivider()
         DropdownMenuItem(
             text = { Text(text = stringResource(R.string.sort_default)) },
             leadingIcon = {

@@ -65,7 +65,7 @@ private fun FilterMenu(
             onClick = {},
             modifier = Modifier.testTag("FilterTitleMenuItem")
         )
-        Divider()
+        HorizontalDivider()
         FilterOptions.entries.groupBy { it.filterKey }.forEach { (filterKey, filterOptions) ->
             Text(
                 text = stringResource(filterOptions.first().sectionTitleResId),
@@ -94,7 +94,7 @@ private fun FilterMenu(
                     )
                 }
             }
-            Divider()
+            HorizontalDivider()
         }
         DropdownMenuItem(
             text = { Text(text = stringResource(R.string.apply_filters)) },

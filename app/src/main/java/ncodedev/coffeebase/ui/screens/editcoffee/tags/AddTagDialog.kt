@@ -18,13 +18,16 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.ui.screens.editcoffee.EditCoffeeViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: EditCoffeeViewModel) {
 
     val tagViewModel: TagViewModel = hiltViewModel()
     val colorPickerController = rememberColorPickerController()
+//    val dropdownExpanded = remember { mutableStateOf(false) }
 
     if (showAddTagDialog.value) {
+        tagViewModel.getTags()
         AlertDialog(
             onDismissRequest = { showAddTagDialog.value = false },
             confirmButton = {
@@ -45,8 +48,14 @@ fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: E
             },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                    ExposedDropdownMenuBox(
+                        expanded = tagViewModel.showHintDropdown.value,
+                        onExpandedChange = {
+                            tagViewModel.showHintDropdown.value = !tagViewModel.showHintDropdown.value
+                        }
+                    ) {
                         OutlinedTextField(
+                            modifier = Modifier.menuAnchor(),
                             label = { Text(text = stringResource(R.string.tag_name)) },
                             value = tagViewModel.tagName.value,
                             onValueChange = tagViewModel::validateAndSetTagName,
@@ -55,7 +64,7 @@ fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: E
                                 focusedContainerColor = tagViewModel.color.value,
                                 unfocusedContainerColor = tagViewModel.color.value
                             ),
-                            isError = !tagViewModel.isTagNameValid.value
+                            isError = !tagViewModel.isTagNameValid.value,
                         )
                         if (!tagViewModel.isTagNameValid.value) {
                             Text(
@@ -64,22 +73,21 @@ fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: E
                                 modifier = Modifier.padding(start = 10.dp)
                             )
                         }
-                        DropdownMenu(
-                            expanded = tagViewModel.tags.isNotEmpty(),
-                            onDismissRequest = {  },
-                            modifier = Modifier.align(Alignment.TopEnd)
-                        ) {
+                        ExposedDropdownMenu(
+                            expanded = tagViewModel.showHintDropdown.value,
+                            onDismissRequest = { tagViewModel.showHintDropdown.value = false }) {
                             tagViewModel.tagHints.value.forEach { tagHint ->
-                                DropdownMenuItem(
-                                    text = { Text(
+                                DropdownMenuItem(text = {
+                                    Text(
                                         text = tagHint.name,
                                         color = Color(Integer.parseInt(tagHint.color))
-                                    )},
+                                    )
+                                },
                                     onClick = {
                                         tagViewModel.tagName.value = tagHint.name
                                         tagViewModel.color.value = Color(Integer.parseInt(tagHint.color))
-                                    }
-                                )
+                                        tagViewModel.showHintDropdown.value = false
+                                    })
                             }
                         }
                     }
@@ -94,6 +102,7 @@ fun AddTagDialog(showAddTagDialog: MutableState<Boolean>, editCoffeeViewModel: E
             }
         )
     }
+
 }
 
 fun createTagAndCloseDialog(

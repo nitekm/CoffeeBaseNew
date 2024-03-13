@@ -30,12 +30,14 @@ class MyCoffeeBaseViewModel @Inject constructor(
     private val coffeeRepository: CoffeeRepository
 ) : ViewModel() {
 
+    companion object {
+        private const val TAG  = "MyCoffeeBaseViewModel"
+    }
+
     private var coffees by mutableStateOf<List<Coffee>>(emptyList())
     val currentFilters: MutableLiveData<Map<String, Set<String>>> = MutableLiveData(emptyMap())
     private var lastRequest by mutableStateOf(PageCoffeeRequest())
     private var isLastPage by mutableStateOf(false)
-
-    private val TAG: String = "MyCoffeeBaseModelView"
 
     var myCoffeeBaseUiState: MyCoffeeBaseUiState by mutableStateOf(MyCoffeeBaseUiState.Loading)
         private set

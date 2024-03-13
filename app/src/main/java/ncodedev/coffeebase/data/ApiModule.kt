@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import ncodedev.coffeebase.data.repository.UserRepository
 import ncodedev.coffeebase.network.CoffeeApiService
+import ncodedev.coffeebase.network.TagApiService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -45,6 +46,10 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideCoffeeApiService(retrofit: Retrofit) = retrofit.create(CoffeeApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideTagApiService(retrofit: Retrofit) = retrofit.create(TagApiService::class.java)
 
     private fun provideHeaderInterceptor(token: String): Interceptor {
         return Interceptor { chain ->
