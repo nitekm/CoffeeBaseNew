@@ -132,7 +132,7 @@ fun CoffeesGrid(
     ) {
         items(
             items = coffees,
-            key = { coffee -> coffee.id }
+            key = { coffee -> coffee.id!! }
         ) { coffee ->
             CoffeeCard(
                 coffee,
@@ -163,7 +163,7 @@ fun CoffeeCard(
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
-                        .data(coffee.imageUrl)
+                        .data(coffee.getImageDownloadUrl())
                         .crossfade(true)
                         .build(),
                     contentDescription = stringResource(R.string.coffee_photo),
@@ -214,11 +214,11 @@ fun MyCoffeeBaseScreenPreview() {
             content = { padding ->
                 CoffeesGrid(
                     coffees = listOf(
-                        Coffee(1, "coffee1", true, "", emptyList()),
-                        Coffee(2, "coffee2", false, "", emptyList()),
-                        Coffee(3, "coffee3", true, "", emptyList()),
-                        Coffee(4, "coffee4", false, "", emptyList()),
-                        Coffee(5, "coffee5", true, "", emptyList())
+//                        Coffee(1, "coffee1", true, "", emptyList()),
+//                        Coffee(2, "coffee2", false, "", emptyList()),
+//                        Coffee(3, "coffee3", true, "", emptyList()),
+//                        Coffee(4, "coffee4", false, "", emptyList()),
+//                        Coffee(5, "coffee5", true, "", emptyList())
                     ), modifier = Modifier, padding
                 )
             }

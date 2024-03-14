@@ -12,6 +12,8 @@ android {
             buildConfig = true
         }
         buildConfigField('String', 'CLIENT_ID', "${CLIENT_ID}")
+        buildConfigField('String', 'BASE_URL','\"http://10.0.2.2:8080/"')
+//        buildConfigField("String", "BaseURL", '\"https://coffeebase-379621.lm.r.appspot.com/"')
 
         applicationId "ncodedev.coffeebase"
         minSdk 27

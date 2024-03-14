@@ -10,18 +10,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
 import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageFromGallery
+import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageViewModel
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.GeneralCoffeeInfo
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.OriginCoffeeInfo
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.OtherCoffeeInfo
@@ -31,8 +34,9 @@ import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
 fun EditCoffeeScreen(navController: NavHostController) {
-
+    val context = LocalContext.current
     val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
+    val coffeeImageViewModel = viewModel<CoffeeImageViewModel>()
 
     val tabItems = listOf(
         stringResource(R.string.general),
@@ -64,7 +68,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
                     .align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CoffeeImageFromGallery(modifier = Modifier.padding(top = 15.dp))
+                CoffeeImageFromGallery(modifier = Modifier.padding(top = 15.dp), coffeeImageViewModel = coffeeImageViewModel)
                 Text(
                     text = stringResource(R.string.tap_to_change_image),
                     fontSize = 16.sp,
@@ -119,7 +123,7 @@ fun EditCoffeeScreen(navController: NavHostController) {
                 }
             }
             Button(
-                onClick = { editCoffeeViewModel.saveCoffee() },
+                onClick = { editCoffeeViewModel.saveCoffee(context, coffeeImageViewModel.imageBitMap.value) },
                 enabled = editCoffeeViewModel.isNameValid.value,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

@@ -1,15 +1,30 @@
 package ncodedev.coffeebase.ui.screens.editcoffee
 
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import ncodedev.coffeebase.data.repository.CoffeeRepository
 import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.model.Tag
 import ncodedev.coffeebase.model.enums.Continent
 import ncodedev.coffeebase.model.enums.RoastProfile
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileOutputStream
+import javax.inject.Inject
 
-class EditCoffeeViewModel : ViewModel() {
+@HiltViewModel
+class EditCoffeeViewModel @Inject constructor(
+    private val coffeeRepository: CoffeeRepository
+) : ViewModel() {
 
     var coffeeName = mutableStateOf("")
     var isNameValid = mutableStateOf(true)
@@ -27,41 +42,41 @@ class EditCoffeeViewModel : ViewModel() {
     var rating = mutableDoubleStateOf(0.0)
     var tags = mutableStateListOf<Tag>()
 
-    fun saveCoffee() {
-        if (validateCoffee()) return
+    fun saveCoffee(context: Context, coffeeImage: Bitmap?) {
+        if (!validateCoffee()) return
         val coffee = Coffee(
-            coffeeName = coffeeName.value,
-            origin = origin.value,
-            roaster = roaster.value,
-            processing = processing.value,
-            roastProfile = roastProfile.value,
-            region = region.value,
-            continent = continent.value,
-            farm = farm.value,
+            id = null,
+            name = coffeeName.value,
+            origin = origin.value.takeIf { it.isNotBlank() },
+            roaster = roaster.value.takeIf { it.isNotBlank() },
+            processing = processing.value.takeIf { it.isNotBlank() },
+            roastProfile = roastProfile.value.roastProfileValue,
+            region = region.value.takeIf { it.isNotBlank() },
+            continent = continent.value.continentValue,
+            farm = farm.value.takeIf { it.isNotBlank() },
             cropHeight = cropHeight.value.toIntOrNull(),
             scaRating = scaRating.value.toIntOrNull(),
-            rating = rating.doubleValue,
-            tags = tags.value
+            rating = rating.doubleValue.takeIf { it > 0.0 },
+            coffeeImageName = null,
+            favourite = false,
+            tags = tags,
         )
-        TODO()
+        val coffeeImagePart = coffeeImage?.toMultipartBodyPart(context, "image")
+
+        viewModelScope.launch { coffeeRepository.saveCoffee(coffee, coffeeImagePart) }
     }
 
-    fun validateCoffee() {
-        return
+    private fun validateCoffee(): Boolean {
+        return isNameValid.value && isScaRatingValid.value && isCropHeightValid.value
     }
 
-    fun validateAndSetCoffeeName(coffeeName: String) {
-        this.coffeeName.value = coffeeName
-        isNameValid.value = coffeeName.isNotBlank()
-    }
+    private fun Bitmap.toMultipartBodyPart(context: Context, name: String): MultipartBody.Part {
+        val file = File.createTempFile(name, ".jpg", context.cacheDir)
+        FileOutputStream(file).use { outputStream ->
+            this.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
 
-    fun validateAndSetCropHeight(cropHeight: Int) {
-        this.cropHeight.value = cropHeight.toString()
-        isCropHeightValid.value = cropHeight in 0..8849
-    }
-
-    fun validateAndSetScaRating(scaRating: Int) {
-        this.scaRating.value = scaRating.toString()
-        isCropHeightValid.value = scaRating in 0..100
+            val requestBody = file.asRequestBody("image/jpg".toMediaTypeOrNull())
+            return MultipartBody.Part.createFormData(name, file.name, requestBody)
+        }
     }
 }

@@ -23,7 +23,7 @@ fun OtherCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
         )
         CoffeeBaseStandardTextField(
             value = editCoffeeViewModel.cropHeight.value,
-            onValueChange = { cropHeight -> editCoffeeViewModel.validateAndSetCropHeight(Integer.parseInt(cropHeight)) },
+            onValueChange = { cropHeight -> editCoffeeViewModel.cropHeight.value = cropHeight },
             labelResId = R.string.crop_height,
             keyBoardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
             isValid = editCoffeeViewModel.isCropHeightValid.value,
@@ -31,7 +31,7 @@ fun OtherCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
         )
         CoffeeBaseStandardTextField(
             value = editCoffeeViewModel.scaRating.value,
-            onValueChange = { scaRating -> editCoffeeViewModel.validateAndSetScaRating(Integer.parseInt(scaRating)) },
+            onValueChange = { scaRating -> editCoffeeViewModel.cropHeight.value = scaRating},
             labelResId = R.string.sca_score,
             keyBoardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             isValid = editCoffeeViewModel.isScaRatingValid.value,

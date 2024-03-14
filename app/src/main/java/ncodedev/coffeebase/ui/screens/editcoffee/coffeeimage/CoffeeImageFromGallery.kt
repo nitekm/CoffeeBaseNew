@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.ui.components.common.PermissionDialog
@@ -37,9 +36,8 @@ import ncodedev.coffeebase.ui.components.common.StoragePermissionTextProvider
 import ncodedev.coffeebase.ui.utils.*
 
 @Composable
-fun CoffeeImageFromGallery(modifier: Modifier = Modifier) {
+fun CoffeeImageFromGallery(modifier: Modifier = Modifier, coffeeImageViewModel: CoffeeImageViewModel) {
     val context = LocalContext.current
-    val coffeeImageViewModel = viewModel<CoffeeImageViewModel>()
     val dialogQueue = coffeeImageViewModel.visiblePermissionDialogQueue
 
     val showGalleryOrCameraDialog = remember { mutableStateOf(false) }

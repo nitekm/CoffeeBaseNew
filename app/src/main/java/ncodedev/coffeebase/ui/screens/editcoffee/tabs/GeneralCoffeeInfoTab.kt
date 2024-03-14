@@ -35,7 +35,7 @@ fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
     Column(modifier = Modifier.padding(all = 20.dp)) {
         CoffeeBaseStandardTextField(
             value = editCoffeeViewModel.coffeeName.value,
-            onValueChange = { coffeeName -> editCoffeeViewModel.validateAndSetCoffeeName(coffeeName)},
+            onValueChange = { coffeeName -> editCoffeeViewModel.coffeeName.value = coffeeName},
             labelResId = R.string.coffee_name,
             keyBoardOptions = KeyboardOptions.Default,
             isValid = editCoffeeViewModel.isNameValid.value,

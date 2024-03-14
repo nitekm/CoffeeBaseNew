@@ -3,10 +3,8 @@ package ncodedev.coffeebase.network
 import ncodedev.coffeebase.model.Coffee
 import ncodedev.coffeebase.model.Page
 import ncodedev.coffeebase.model.PageCoffeeRequest
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import okhttp3.MultipartBody
+import retrofit2.http.*
 
 interface CoffeeApiService {
 
@@ -15,4 +13,8 @@ interface CoffeeApiService {
 
     @GET("coffees/search")
     suspend fun searchCoffees(@Query("content") searchBy: String): List<Coffee>
+
+    @POST("coffees")
+    @Multipart
+    suspend fun saveCoffee(@Part("coffee") coffee: Coffee, @Part image: MultipartBody.Part? = null)
 }
