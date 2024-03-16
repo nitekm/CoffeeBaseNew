@@ -67,6 +67,15 @@ class EditCoffeeViewModel @Inject constructor(
     }
 
     private fun validateCoffee(): Boolean {
+        if (coffeeName.value.isBlank()) {
+            isNameValid.value = false
+        }
+        if (scaRating.value.toIntOrNull() != null && scaRating.value.toIntOrNull() !in 0.. 8849 ) {
+            isScaRatingValid.value = false
+        }
+        if (cropHeight.value.toIntOrNull() != null && cropHeight.value.toInt() !in 0.. 99) {
+            isCropHeightValid.value = false
+        }
         return isNameValid.value && isScaRatingValid.value && isCropHeightValid.value
     }
 
