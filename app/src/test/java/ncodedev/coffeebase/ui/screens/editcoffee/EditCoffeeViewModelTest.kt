@@ -147,5 +147,6 @@ class EditCoffeeViewModelTest {
                         it.headers?.get("Content-Disposition")?.contains("name=\"image\"") == true
             })
         }
+        tempFile.delete()
     }
 }

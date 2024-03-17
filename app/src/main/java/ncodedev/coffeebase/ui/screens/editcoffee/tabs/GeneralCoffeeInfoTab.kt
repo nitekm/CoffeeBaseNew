@@ -69,7 +69,7 @@ fun GeneralCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
             dropDownItemsList = RoastProfile.entries,
             populateMenuItemsFunction = { roastProfile ->
                 DropdownMenuItem(
-                    text = { stringResource(roastProfile.roastProfileResId) },
+                    text = { Text(text = stringResource(roastProfile.roastProfileResId)) },
                     onClick = {
                         editCoffeeViewModel.roastProfile.value = roastProfile
                         roastProfileDropdownState.value = false

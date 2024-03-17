@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
-import ncodedev.coffeebase.model.Coffee
+import ncodedev.coffeebase.createTestCoffee
 import org.junit.Rule
 import org.junit.Test
 
@@ -15,7 +15,7 @@ class MyCoffeeBaseScreenUITest {
 
     @Test
     fun coffee_card_is_populated_with_coffee_data() {
-        val coffee = Coffee(1, "coffee name", true,"test image url")
+        val coffee = createTestCoffee(id = 1, name =  "coffee name", favourite = true)
         composeTestRule.setContent {
             CoffeeCard(coffee)
         }
@@ -27,7 +27,7 @@ class MyCoffeeBaseScreenUITest {
     @Test
     fun given_10coffees_grid_have_10elements() {
         val coffees = List(5) {
-            Coffee(it.toLong(), "coffee name $it", false, "test image url $it")
+            createTestCoffee(id = it.toLong(), name = "coffee name $it")
         }
 
         composeTestRule.setContent {
