@@ -124,8 +124,8 @@ class EditCoffeeViewModelTest {
     @Test
     fun saveCoffee_coffeeImagePart_isConvertedToMultipartBodyPartWhenImageIsPresent() = runTest {
         //TODO chyab najlepiej stworzy cpo prostu plik w fodlerze testowym i go wziac do testow
-        val tempFile: File = mockk()
-        every { context.cacheDir.path } returns "folder/"
+        val tempFile = File("src/test/resources/testCoffeeImage.jpg")
+        every { context.cacheDir } returns tempFile
 
         viewModel.coffeeName.value = "test"
         viewModel.saveCoffee(context, coffeeImage)
