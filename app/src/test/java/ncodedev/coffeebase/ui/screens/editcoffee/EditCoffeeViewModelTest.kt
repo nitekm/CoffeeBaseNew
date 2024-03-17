@@ -2,7 +2,10 @@ package ncodedev.coffeebase.ui.screens.editcoffee
 
 import android.content.Context
 import android.graphics.Bitmap
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +20,8 @@ import ncodedev.coffeebase.model.enums.RoastProfile
 import okhttp3.MultipartBody
 import org.junit.Before
 import org.junit.Test
-import java.io.File
+import java.io.FileOutputStream
+import java.nio.file.Files
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditCoffeeViewModelTest {
@@ -43,8 +47,6 @@ class EditCoffeeViewModelTest {
         viewModel = EditCoffeeViewModel(repository)
         coEvery { repository.saveCoffee(any(), any()) } returns Unit
     }
-
-    // check image - if null is passed when there is no image, and if image is passed when image is present
 
     @Test
     fun saveCoffee_doesNotCallRepository_whenCoffeeNameIsEmpty() = runTest {
@@ -123,14 +125,22 @@ class EditCoffeeViewModelTest {
 
     @Test
     fun saveCoffee_coffeeImagePart_isConvertedToMultipartBodyPartWhenImageIsPresent() = runTest {
-        //TODO chyab najlepiej stworzy cpo prostu plik w fodlerze testowym i go wziac do testow
-        val tempFile = File("src/test/resources/testCoffeeImage.jpg")
-        every { context.cacheDir } returns tempFile
+        val tempFile = Files.createTempFile("test", ".jpg").toFile()
+
+        // Setup mockk behavior
+        every { context.cacheDir } returns tempFile.parentFile
+
+        every { coffeeImage.compress(any(), any(), any()) } answers {
+            val fos = arg<FileOutputStream>(2)
+            fos.use { it.write(ByteArray(0)) }
+            true
+        }
 
         viewModel.coffeeName.value = "test"
         viewModel.saveCoffee(context, coffeeImage)
 
         advanceUntilIdle()
+
         coVerify(exactly = 1) {
             repository.saveCoffee(any(), match {
                         it is MultipartBody.Part &&
