@@ -31,7 +31,7 @@ fun OtherCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
         )
         CoffeeBaseStandardTextField(
             value = editCoffeeViewModel.scaRating.value,
-            onValueChange = { scaRating -> editCoffeeViewModel.cropHeight.value = scaRating},
+            onValueChange = { scaRating -> editCoffeeViewModel.scaRating.value = scaRating},
             labelResId = R.string.sca_score,
             keyBoardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
             isValid = editCoffeeViewModel.isScaRatingValid.value,

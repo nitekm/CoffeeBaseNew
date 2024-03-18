@@ -25,13 +25,13 @@ class GeneralCoffeeInfoTabTest {
     fun setup() {
         MockKAnnotations.init(this)
         viewModel = EditCoffeeViewModel(repository)
+        composeTestRule.setContent {
+            GeneralCoffeeInfo(editCoffeeViewModel = viewModel)
+        }
     }
 
     @Test
     fun generalCoffeeInfoTab_coffeeNameInputText_changesViewModelCoffeeNameField() {
-        composeTestRule.setContent {
-            GeneralCoffeeInfo(viewModel)
-        }
         composeTestRule.onNodeWithTag("Coffee Name").assertIsDisplayed()
         val coffeeName = "test coffee name"
         composeTestRule.onNodeWithTag("Coffee Name").performTextInput(coffeeName)
@@ -40,9 +40,6 @@ class GeneralCoffeeInfoTabTest {
 
     @Test
     fun generalCoffeeInfoTab_roasterInputText_changesViewModelRoasterField() {
-        composeTestRule.setContent {
-            GeneralCoffeeInfo(viewModel)
-        }
         composeTestRule.onNodeWithTag("Roaster").assertIsDisplayed()
         val roaster = "test roaster"
         composeTestRule.onNodeWithTag("Roaster").performTextInput(roaster)
@@ -51,10 +48,6 @@ class GeneralCoffeeInfoTabTest {
 
     @Test
     fun generalCoffeeInfoTab_ratingBarClickOn3rdStar_changesViewModelRatingField() {
-        composeTestRule.setContent {
-            GeneralCoffeeInfo(viewModel)
-        }
-
         val newRating = 3
         composeTestRule.onNodeWithContentDescription("Star $newRating of 6").performClick()
         assert(viewModel.rating.doubleValue == newRating.toDouble())
@@ -62,10 +55,6 @@ class GeneralCoffeeInfoTabTest {
 
     @Test
     fun generalCoffeeInfoTab_ratingBarClickOn6stStar_changesViewModelRatingField() {
-        composeTestRule.setContent {
-            GeneralCoffeeInfo(viewModel)
-        }
-
         val newRating = 6
         composeTestRule.onNodeWithContentDescription("Star $newRating of 6").performClick()
         assert(viewModel.rating.doubleValue == newRating.toDouble())
@@ -73,9 +62,6 @@ class GeneralCoffeeInfoTabTest {
 
     @Test
     fun generalCoffeeInfoTab_roastProfileDropdown_DisplaysAllOptionsWhenClicked() {
-        composeTestRule.setContent { 
-            GeneralCoffeeInfo(editCoffeeViewModel = viewModel)
-        }
         composeTestRule.onNodeWithTag("Roast Profile").performClick()
         composeTestRule.onNodeWithText(RoastProfile.LIGHT.roastProfileValue, ignoreCase = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(RoastProfile.DARK.roastProfileValue, ignoreCase = true).assertIsDisplayed()
@@ -84,13 +70,9 @@ class GeneralCoffeeInfoTabTest {
 
     @Test
     fun generalCoffeeInfoTab_roastProfileDropdown_onOptionClickChangesViewModelRoastProfileValue() {
-        composeTestRule.setContent {
-            GeneralCoffeeInfo(editCoffeeViewModel = viewModel)
-        }
         composeTestRule.onNodeWithTag("Roast Profile").performClick()
         composeTestRule.onNodeWithText(RoastProfile.LIGHT.roastProfileValue, ignoreCase = true).performClick()
 
         assert(viewModel.roastProfile.value == RoastProfile.LIGHT)
     }
-
 }

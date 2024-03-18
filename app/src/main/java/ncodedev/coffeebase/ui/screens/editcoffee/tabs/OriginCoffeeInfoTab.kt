@@ -10,15 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.model.enums.Continent
 import ncodedev.coffeebase.ui.components.common.CoffeeBaseStandardTextField
 import ncodedev.coffeebase.ui.components.common.TextListDropdownMenu
 import ncodedev.coffeebase.ui.screens.editcoffee.EditCoffeeViewModel
-import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 
 @Composable
@@ -59,15 +56,5 @@ fun OriginCoffeeInfo(editCoffeeViewModel: EditCoffeeViewModel) {
             labelResId = R.string.farm,
             keyBoardOptions = KeyboardOptions(imeAction = ImeAction.Done)
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewOriginCoffeeInfo() {
-    val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
-
-    CoffeeBaseTheme {
-        OriginCoffeeInfo(editCoffeeViewModel)
     }
 }
