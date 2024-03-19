@@ -43,6 +43,14 @@ class CoffeeViewModel @Inject constructor(
             }
         }
     }
+
+    fun switchFavourite() {
+
+    }
+
+    fun deleteCoffee() {
+
+    }
 }
 
 

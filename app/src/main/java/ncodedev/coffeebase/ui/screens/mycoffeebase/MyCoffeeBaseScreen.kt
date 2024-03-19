@@ -99,7 +99,6 @@ fun MyCoffeeBaseScreen(navController: NavHostController) {
                                 viewModel = coffeeBaseViewModel
                             )
                             FilterAction(
-//                                searchModeActive = searchModeActive,
                                 showFilterMenu = filterMenuExpanded,
                                 viewModel = coffeeBaseViewModel
                             )

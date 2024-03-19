@@ -23,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
+import ncodedev.coffeebase.ui.screens.coffeescreen.CoffeeViewModel
 import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageFromGallery
 import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageViewModel
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.GeneralCoffeeInfo
@@ -33,7 +34,7 @@ import ncodedev.coffeebase.ui.screens.editcoffee.tags.DisplayTag
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
-fun EditCoffeeScreen(navController: NavHostController) {
+fun EditCoffeeScreen(navController: NavHostController, coffeeViewModel: CoffeeViewModel? = null) {
     val context = LocalContext.current
     val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
     val coffeeImageViewModel = viewModel<CoffeeImageViewModel>()

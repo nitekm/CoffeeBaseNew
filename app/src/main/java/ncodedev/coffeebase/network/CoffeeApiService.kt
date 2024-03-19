@@ -14,7 +14,7 @@ interface CoffeeApiService {
     @GET("coffees/search")
     suspend fun searchCoffees(@Query("content") searchBy: String): List<Coffee>
 
-    @GET("/coffees/{id")
+    @GET("/coffees/{id}")
     suspend fun getCoffee(@Path("id") coffeeId: Long): Coffee
 
     @POST("coffees")

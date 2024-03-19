@@ -100,8 +100,10 @@ fun RatingBar(
 @Composable
 fun DisplayCoffeeInfoCard(
     title: String,
+    shouldDisplayCard: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    if (shouldDisplayCard)
     Card(
         modifier = Modifier.padding(top = 15.dp, start = 40.dp, end = 40.dp),
         elevation = CardDefaults.elevatedCardElevation(10.dp)
@@ -118,7 +120,10 @@ fun DisplayCoffeeInfoCard(
     }
 }
 @Composable
-fun LabelledText(label: String, text: String?) {
+fun LabelledText(
+    label: String,
+    text: String?
+) {
     Column {
         Text(label, style = MaterialTheme.typography.labelSmall)
         Text(text?: "", style = MaterialTheme.typography.bodyMedium)

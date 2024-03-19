@@ -214,6 +214,7 @@
     <string name="cancel">Cancel</string>
     <string name="coffee_bean_icon">Coffee bean icon</string>
     <string name="roast">Roast</string>
+    <string name="edit_coffee_button">Edit coffee button</string>
 
     <string-array name="coffees_in_row">
         <item>2</item>

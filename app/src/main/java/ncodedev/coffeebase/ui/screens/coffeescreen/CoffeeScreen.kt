@@ -30,6 +30,9 @@ import ncodedev.coffeebase.ui.components.common.DisplayCoffeeInfoCard
 import ncodedev.coffeebase.ui.components.common.LabelledText
 import ncodedev.coffeebase.ui.components.common.RatingBar
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
+import ncodedev.coffeebase.ui.components.topbar.DeleteCoffeeAction
+import ncodedev.coffeebase.ui.components.topbar.EditCoffeeAction
+import ncodedev.coffeebase.ui.components.topbar.SwitchFavouriteAction
 import ncodedev.coffeebase.ui.screens.editcoffee.tags.DisplayTag
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
@@ -40,7 +43,7 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
     val tabRowScrollState = rememberScrollState()
 
     val coffeeViewModel: CoffeeViewModel = hiltViewModel()
-    coffee = when (val uiState =coffeeViewModel.coffeeUiState) {
+    coffee = when (val uiState = coffeeViewModel.coffeeUiState) {
         is CoffeeUiState.Success -> uiState.coffee
         else -> null
     }
@@ -57,7 +60,9 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
                 canNavigateBack = true,
                 navigateUp = { navController.navigate(Screens.MyCoffeeBase.name) },
                 actions = {
-
+                    SwitchFavouriteAction(coffeeViewModel = coffeeViewModel)
+                    EditCoffeeAction(navHostController = navController)
+                    DeleteCoffeeAction(coffeeViewModel = coffeeViewModel)
                 }
             )
         },
@@ -81,7 +86,8 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
                 )
                 Text(
                     text = coffee?.name ?: "coffee name",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 3.dp)
                 )
                 RatingBar(currentRating = coffee?.rating?.toInt() ?: 0)
                 Row(modifier = Modifier.horizontalScroll(tabRowScrollState)) {
@@ -93,7 +99,11 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
                     }
                 }
                 HorizontalDivider(modifier = Modifier.padding(top = 7.dp))
-                DisplayCoffeeInfoCard(title = stringResource(R.string.roast)) {
+                DisplayCoffeeInfoCard(
+                    title = stringResource(R.string.roast),
+                    shouldDisplayCard = coffee?.roaster != null ||
+                            coffee?.roastProfile != RoastProfile.ROAST_PROFILE.roastProfileValue
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -114,7 +124,13 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
                         }
                     }
                 }
-                DisplayCoffeeInfoCard(title = stringResource(R.string.origin)) {
+                DisplayCoffeeInfoCard(
+                    title = stringResource(R.string.origin),
+                    shouldDisplayCard = coffee?.continent != Continent.CONTINENT.continentValue ||
+                            coffee?.region != null ||
+                            coffee?.origin != null ||
+                            coffee?.farm != null
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -127,47 +143,62 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
                                     label = stringResource(R.string.continent),
                                     text = coffee?.continent
                                 )
+                                Spacer(modifier = Modifier.padding(5.dp))
                             }
-                            Spacer(modifier = Modifier.padding(5.dp))
-                            LabelledText(
-                                label = stringResource(R.string.region),
-                                text = coffee?.region
-                            )
+                            coffee?.region?.let {
+                                LabelledText(
+                                    label = stringResource(R.string.region),
+                                    text = it
+                                )
+                            }
                         }
                         Column {
                             coffee?.origin?.let {
                                 LabelledText(
                                     label = stringResource(R.string.origin),
-                                    text = coffee?.origin
+                                    text = it
+                                )
+                                Spacer(modifier = Modifier.padding(5.dp))
+                            }
+                            coffee?.farm?.let {
+                                LabelledText(
+                                    label = stringResource(R.string.farm),
+                                    text = it
                                 )
                             }
-                            Spacer(modifier = Modifier.padding(5.dp))
-                            LabelledText(
-                                label = stringResource(R.string.farm),
-                                text = coffee?.farm
-                            )
                         }
                     }
                 }
-                DisplayCoffeeInfoCard(title = stringResource(R.string.other)) {
+                DisplayCoffeeInfoCard(
+                    title = stringResource(R.string.other),
+                    shouldDisplayCard = coffee?.processing != null ||
+                            coffee?.cropHeight != null ||
+                            coffee?.scaRating != null
+                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 15.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        LabelledText(
-                            label = stringResource(R.string.processing),
-                            text = coffee?.processing
-                        )
-                        LabelledText(
-                            label = stringResource(R.string.crop_height),
-                            text = coffee?.cropHeight.toString()
-                        )
-                        LabelledText(
-                            label = stringResource(R.string.sca_score),
-                            text = coffee?.scaRating.toString()
-                        )
+                        coffee?.processing?.let {
+                            LabelledText(
+                                label = stringResource(R.string.processing),
+                                text = it
+                            )
+                        }
+                        coffee?.cropHeight?.let {
+                            LabelledText(
+                                label = stringResource(R.string.crop_height),
+                                text = it.toString()
+                            )
+                        }
+                        coffee?.scaRating?.let {
+                            LabelledText(
+                                label = stringResource(R.string.sca_score),
+                                text = it.toString()
+                            )
+                        }
                     }
                 }
             }
