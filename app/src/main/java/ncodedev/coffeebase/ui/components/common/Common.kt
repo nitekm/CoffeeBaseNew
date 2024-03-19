@@ -71,7 +71,7 @@ fun <T> TextListDropdownMenu(
             expanded = expanded.value,
             onDismissRequest = { expanded.value = false }
         ) {
-            dropDownItemsList.forEach{ populateMenuItemsFunction(it) }
+            dropDownItemsList.forEach { populateMenuItemsFunction(it) }
         }
     }
 }
@@ -103,22 +103,24 @@ fun DisplayCoffeeInfoCard(
     shouldDisplayCard: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    if (shouldDisplayCard)
-    Card(
-        modifier = Modifier.padding(top = 15.dp, start = 40.dp, end = 40.dp),
-        elevation = CardDefaults.elevatedCardElevation(10.dp)
-    ) {
-        Column {
-            Row(modifier = Modifier.padding(all = 5.dp)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.labelMedium
-                )
+    if (shouldDisplayCard) {
+        Card(
+            modifier = Modifier.padding(top = 15.dp, start = 40.dp, end = 40.dp),
+            elevation = CardDefaults.elevatedCardElevation(10.dp)
+        ) {
+            Column {
+                Row(modifier = Modifier.padding(all = 5.dp)) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+                content()
             }
-            content()
         }
     }
 }
+
 @Composable
 fun LabelledText(
     label: String,
@@ -126,7 +128,7 @@ fun LabelledText(
 ) {
     Column {
         Text(label, style = MaterialTheme.typography.labelSmall)
-        Text(text?: "", style = MaterialTheme.typography.bodyMedium)
+        Text(text ?: "", style = MaterialTheme.typography.bodyMedium)
     }
 }
 
