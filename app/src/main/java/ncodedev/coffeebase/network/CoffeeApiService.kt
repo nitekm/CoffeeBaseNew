@@ -14,6 +14,9 @@ interface CoffeeApiService {
     @GET("coffees/search")
     suspend fun searchCoffees(@Query("content") searchBy: String): List<Coffee>
 
+    @GET("/coffees/{id")
+    suspend fun getCoffee(@Path("id") coffeeId: Long): Coffee
+
     @POST("coffees")
     @Multipart
     suspend fun saveCoffee(@Part("coffee") coffee: Coffee, @Part image: MultipartBody.Part? = null)

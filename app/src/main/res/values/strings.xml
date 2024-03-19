@@ -212,6 +212,8 @@
     <string name="add_tag">Add tag</string>
     <string name="tag_name">Tag name</string>
     <string name="cancel">Cancel</string>
+    <string name="coffee_bean_icon">Coffee bean icon</string>
+    <string name="roast">Roast</string>
 
     <string-array name="coffees_in_row">
         <item>2</item>

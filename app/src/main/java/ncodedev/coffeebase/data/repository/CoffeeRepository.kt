@@ -13,6 +13,8 @@ class CoffeeRepository @Inject constructor(
 
     suspend fun searchCoffees(searchBy: String) = coffeeApiService.searchCoffees(searchBy)
 
+    suspend fun getCoffee(coffeeId: Long) = coffeeApiService.getCoffee(coffeeId)
+
     suspend fun saveCoffee(coffee: Coffee, image: MultipartBody.Part?)
         = coffeeApiService.saveCoffee(coffee = coffee, image = image)
 }
