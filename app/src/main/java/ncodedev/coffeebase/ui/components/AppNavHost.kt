@@ -29,8 +29,11 @@ fun AppNavHost(navController: NavHostController) {
         ) {
             CoffeeScreen(navController = navController, it.arguments?.getLong("coffeeId") ?: 0L)
         }
-        composable(Screens.EditCoffee.name) {
-            EditCoffeeScreen(navController)
+        composable(
+            "${Screens.EditCoffee.name}/{coffeeId}",
+            arguments = listOf(navArgument("coffeeId") {type = NavType.LongType })
+            ) {
+            EditCoffeeScreen(navController = navController, it.arguments?.getLong("coffeeId") ?: 0L)
         }
         composable(Screens.AddBrewRecipe.name) {
             //AddBrewRecipeScreen()

@@ -15,6 +15,7 @@ import javax.inject.Inject
 
 sealed interface CoffeeUiState {
     data class Success(val coffee: Coffee) : CoffeeUiState
+    object Empty: CoffeeUiState
     object Error : CoffeeUiState
     object Loading : CoffeeUiState
 }
@@ -44,12 +45,31 @@ class CoffeeViewModel @Inject constructor(
         }
     }
 
-    fun switchFavourite() {
-
+    fun switchFavourite(coffeeId: Long) {
+        viewModelScope.launch {
+            coffeeUiState = CoffeeUiState.Loading
+            coffeeUiState = try {
+                Log.i(TAG, "CoffeeViewModel response from API")
+                CoffeeUiState.Success(coffeeRepository.switchFavourite(coffeeId))
+            } catch (e: IOException) {
+                Log.e(TAG, "switchFavourite resulted in exception $e")
+                CoffeeUiState.Error
+            }
+        }
     }
 
-    fun deleteCoffee() {
-
+    fun deleteCoffee(coffeeId: Long) {
+        viewModelScope.launch {
+            coffeeUiState = CoffeeUiState.Loading
+            coffeeUiState = try {
+                coffeeRepository.deleteCoffee(coffeeId)
+                Log.i(TAG, "CoffeeViewModel response from API")
+                CoffeeUiState.Empty
+            } catch (e: IOException) {
+                Log.e(TAG, "deleteCoffee resulted in exception $e")
+                CoffeeUiState.Error
+            }
+        }
     }
 }
 

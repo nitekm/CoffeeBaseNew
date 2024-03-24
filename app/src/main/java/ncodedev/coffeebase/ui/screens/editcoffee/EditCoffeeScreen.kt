@@ -23,7 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import ncodedev.coffeebase.R
 import ncodedev.coffeebase.ui.components.Screens
 import ncodedev.coffeebase.ui.components.topbar.CoffeeBaseTopAppBar
-import ncodedev.coffeebase.ui.screens.coffeescreen.CoffeeViewModel
 import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageFromGallery
 import ncodedev.coffeebase.ui.screens.editcoffee.coffeeimage.CoffeeImageViewModel
 import ncodedev.coffeebase.ui.screens.editcoffee.tabs.GeneralCoffeeInfo
@@ -34,7 +33,7 @@ import ncodedev.coffeebase.ui.screens.editcoffee.tags.DisplayTag
 import ncodedev.coffeebase.ui.theme.CoffeeBaseTheme
 
 @Composable
-fun EditCoffeeScreen(navController: NavHostController, coffeeViewModel: CoffeeViewModel? = null) {
+fun EditCoffeeScreen(navController: NavHostController, coffeeId: Long) {
     val context = LocalContext.current
     val editCoffeeViewModel: EditCoffeeViewModel = hiltViewModel()
     val coffeeImageViewModel = viewModel<CoffeeImageViewModel>()
@@ -49,6 +48,18 @@ fun EditCoffeeScreen(navController: NavHostController, coffeeViewModel: CoffeeVi
     val tabRowScrollState = rememberScrollState()
     val showAddTagDialog = remember { mutableStateOf(false) }
 
+    when (editCoffeeViewModel.editCoffeeUiState) {
+        is EditCoffeeUiState.Success -> navController.navigate(Screens.MyCoffeeBase.name)
+        else -> Unit
+    }
+
+    LaunchedEffect(coffeeId) {
+        coffeeId.let { id ->
+            if (id != 0L) {
+                editCoffeeViewModel.getCoffeeToEdit(coffeeId)
+            }
+        }
+    }
     Scaffold(
         topBar = {
             CoffeeBaseTopAppBar(
@@ -69,7 +80,10 @@ fun EditCoffeeScreen(navController: NavHostController, coffeeViewModel: CoffeeVi
                     .align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CoffeeImageFromGallery(modifier = Modifier.padding(top = 15.dp), coffeeImageViewModel = coffeeImageViewModel)
+                CoffeeImageFromGallery(
+                    modifier = Modifier.padding(top = 15.dp),
+                    coffeeImageViewModel = coffeeImageViewModel
+                )
                 Text(
                     text = stringResource(R.string.tap_to_change_image),
                     fontSize = 16.sp,
@@ -92,7 +106,7 @@ fun EditCoffeeScreen(navController: NavHostController, coffeeViewModel: CoffeeVi
                 }
                 AddTagDialog(showAddTagDialog = showAddTagDialog, editCoffeeViewModel)
                 Row(modifier = Modifier.horizontalScroll(tabRowScrollState)) {
-                    editCoffeeViewModel.tags.forEach {tag ->
+                    editCoffeeViewModel.tags.forEach { tag ->
                         DisplayTag(
                             tagName = tag.name,
                             color = Integer.parseInt(tag.color)
@@ -124,6 +138,7 @@ fun EditCoffeeScreen(navController: NavHostController, coffeeViewModel: CoffeeVi
                 }
             }
             Button(
+                //wywołac saveAction to bedzie zmienne zaleznie czy edit czy new coffee
                 onClick = { editCoffeeViewModel.saveCoffee(context, coffeeImageViewModel.imageBitMap.value) },
                 enabled = editCoffeeViewModel.isNameValid.value,
                 modifier = Modifier
@@ -149,6 +164,6 @@ fun EditCoffeeScreen(navController: NavHostController, coffeeViewModel: CoffeeVi
 @Composable
 fun EditCoffeeScreenPreview() {
     CoffeeBaseTheme {
-        EditCoffeeScreen(navController = rememberNavController())
+        EditCoffeeScreen(navController = rememberNavController(), 0L)
     }
 }

@@ -8,12 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import ncodedev.coffeebase.R
-import ncodedev.coffeebase.ui.screens.coffeescreen.CoffeeViewModel
+import ncodedev.coffeebase.model.Coffee
 
 @Composable
-fun SwitchFavouriteAction(coffeeViewModel: CoffeeViewModel) {
-    IconButton(onClick = { coffeeViewModel.switchFavourite() }) {
-        if (coffeeViewModel.coffee.value?.favourite == false) {
+fun SwitchFavouriteAction(onClick: () -> Unit, coffee: Coffee?) {
+    IconButton(onClick = onClick) {
+        if (coffee?.favourite == false) {
             Icon(imageVector = Icons.Filled.FavoriteBorder, contentDescription = stringResource(R.string.favourite_icon))
         } else {
             Icon(painter = painterResource(R.drawable.ic_favorite_filled), contentDescription = stringResource(R.string.favourite_icon))

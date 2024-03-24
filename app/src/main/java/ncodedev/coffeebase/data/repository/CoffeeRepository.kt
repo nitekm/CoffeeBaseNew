@@ -17,4 +17,9 @@ class CoffeeRepository @Inject constructor(
 
     suspend fun saveCoffee(coffee: Coffee, image: MultipartBody.Part?)
         = coffeeApiService.saveCoffee(coffee = coffee, image = image)
+
+    suspend fun switchFavourite(coffeeId: Long) = coffeeApiService.switchFavourite(coffeeId)
+
+    suspend fun deleteCoffee(coffeeId: Long) = coffeeApiService.deleteCoffee(coffeeId)
+
 }

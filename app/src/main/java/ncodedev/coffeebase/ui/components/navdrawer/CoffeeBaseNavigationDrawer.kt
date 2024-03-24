@@ -88,7 +88,7 @@ fun getNavigationDrawerItems(): List<NavigationItem> {
     return listOf(
         NavigationItem(
             stringResource(R.string.add_coffee),
-            Screens.EditCoffee.name,
+            "${Screens.EditCoffee.name}/0L",
             Icons.Filled.AddCircle
         ),
         NavigationItem(

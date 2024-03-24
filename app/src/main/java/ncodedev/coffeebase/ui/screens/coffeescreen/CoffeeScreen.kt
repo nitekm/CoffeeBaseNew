@@ -43,9 +43,11 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
     val tabRowScrollState = rememberScrollState()
 
     val coffeeViewModel: CoffeeViewModel = hiltViewModel()
-    coffee = when (val uiState = coffeeViewModel.coffeeUiState) {
-        is CoffeeUiState.Success -> uiState.coffee
-        else -> null
+    coffee = null
+    when (val uiState = coffeeViewModel.coffeeUiState) {
+        is CoffeeUiState.Success -> coffee = uiState.coffee
+        is CoffeeUiState.Empty -> navController.navigate(Screens.MyCoffeeBase.name)
+        else -> Unit
     }
 
     LaunchedEffect(coffeeId) {
@@ -60,9 +62,9 @@ fun CoffeeScreen(navController: NavHostController, coffeeId: Long) {
                 canNavigateBack = true,
                 navigateUp = { navController.navigate(Screens.MyCoffeeBase.name) },
                 actions = {
-                    SwitchFavouriteAction(coffeeViewModel = coffeeViewModel)
-                    EditCoffeeAction(navHostController = navController)
-                    DeleteCoffeeAction(coffeeViewModel = coffeeViewModel)
+                    SwitchFavouriteAction(onClick = { coffee?.id?.let { coffeeViewModel.switchFavourite(it) } }, coffee)
+                    EditCoffeeAction(onClick = { coffee?.id?.let { navController.navigate("${Screens.EditCoffee.name}/$it") } })
+                    DeleteCoffeeAction(onClick = { coffee?.id?.let { coffeeViewModel.deleteCoffee(it) } })
                 }
             )
         },
